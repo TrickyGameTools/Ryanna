@@ -1,5 +1,6 @@
 *
 !src
+!src/*
 !*.md
 !build.sh
 !license.txt
