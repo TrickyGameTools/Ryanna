@@ -28,33 +28,23 @@ package main
 import (
 	"trickyunits/mkl"
 	"trickyunits/qstr"
-	"strings"
 )
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - yes.go","17.12.29")
-mkl.Lic    ("Ryanna - Builder for jcr based love projects - yes.go","GNU General Public License 3")
+mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","17.12.29")
+mkl.Lic    ("Ryanna - Builder for jcr based love projects - meta.go","GNU General Public License 3")
 }
 
 
-func yes(tag,question string) bool{
-	for tag=="" || prjgini.C(tag)=="" {
-		aprint("yellow",question)
-		aprint("bcyan"," ? ")
-		aprint("lblue","(Y/N) ")
-		y:=qstr.RawInput("")
-		switch strings.ToUpper(qstr.Left(qstr.MyTrim(y),1)){
-			case "Y": 
-				if tag=="" { return true }
-				prjgini.D(tag,"YES")
-				prjgini.SaveSource(project)
-			case "N": 
-				if tag=="" { return true }
-				prjgini.D(tag,"NO")
-				prjgini.SaveSource(project)
-			default:  aprint("red","I don't understand! Let's ask this again!")
-		}
-	}
-	return prjgini.C(tag)=="YES"
+func askmeta(){
+	aprint("yellow","\n\n")
+	ask("title","Project title:",qstr.StripAll(project))
+	ask("author","Author:","Mr. X")
+}
+
+
+func asksys() { // strictly speaking not meta, but handier to have it here.
+	pask("Release","Release dir:","")
+	pask("Test","Test dir:","")
 }

@@ -20,19 +20,22 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.28
+Version: 17.12.29
 */
 package main
 
 
 import "trickyunits/mkl"
 import "trickyunits/gini"
+import "runtime"
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.28")
+mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.29")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - globals.go","GNU General Public License 3")
 }
 
+
+var platform = runtime.GOOS
 
 var project string
 var prjgini gini.TGINI

@@ -28,33 +28,36 @@ package main
 import (
 	"trickyunits/mkl"
 	"trickyunits/qstr"
-	"strings"
 )
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - yes.go","17.12.29")
-mkl.Lic    ("Ryanna - Builder for jcr based love projects - yes.go","GNU General Public License 3")
+mkl.Version("Ryanna - Builder for jcr based love projects - ask.go","17.12.29")
+mkl.Lic    ("Ryanna - Builder for jcr based love projects - ask.go","GNU General Public License 3")
 }
 
 
-func yes(tag,question string) bool{
-	for tag=="" || prjgini.C(tag)=="" {
-		aprint("yellow",question)
-		aprint("bcyan"," ? ")
-		aprint("lblue","(Y/N) ")
-		y:=qstr.RawInput("")
-		switch strings.ToUpper(qstr.Left(qstr.MyTrim(y),1)){
-			case "Y": 
-				if tag=="" { return true }
-				prjgini.D(tag,"YES")
-				prjgini.SaveSource(project)
-			case "N": 
-				if tag=="" { return true }
-				prjgini.D(tag,"NO")
-				prjgini.SaveSource(project)
-			default:  aprint("red","I don't understand! Let's ask this again!")
+func ask(tag,question,defaultanswer string) string {
+	antwoord:=""
+	for antwoord==""{
+		aprint("yellow",question," ")
+		if prjgini.C(tag)=="" {
+			aprint("cyan","["+defaultanswer+"] ")
+			antwoord=qstr.RawInput("")
+			if antwoord=="" { antwoord=defaultanswer }
+			if antwoord!="" { 
+				prjgini.D(tag,antwoord)
+				prjgini.SaveSource(project) 
+			}
+		} else {
+			antwoord=prjgini.C(tag)
+			aprintln("cyan",antwoord)
 		}
 	}
-	return prjgini.C(tag)=="YES"
+	return antwoord
+}
+
+
+func pask(tag,question,defaultanswer string) string{
+	return ask(tag+"."+platform,question,defaultanswer)
 }
