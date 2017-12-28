@@ -1,0 +1,6 @@
+*
+!src
+!*.md
+!build.sh
+!license.txt
+!.gitignore
