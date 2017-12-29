@@ -4,12 +4,13 @@ output = "package main\n\nimport \"trickyunits/mkl\"\n\n// Licensed under the GN
 
 files = glob("*")
 
+mkl=""
+
 for myfile in files:
 	if myfile[-4:]=='.lua':
 		print "Converting: ",myfile
 		vname=myfile[:-4]
 		output += "\tscript[\""+vname+"\"] = `"
-		mkl=""
 		with open (myfile, "r") as bt:
 			datalines=bt.readlines()
 		for data in datalines:
