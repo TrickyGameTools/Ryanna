@@ -27,6 +27,7 @@ package main
 
 import (
 	"os"
+	"path"
 	"trickyunits/mkl"
 	"trickyunits/qff"
 	"trickyunits/qstr"
@@ -67,4 +68,5 @@ func asksys() { // strictly speaking not meta, but handier to have it here.
 	yes("Win32","Do you want to create a windows 32bit build")
 	yes("Win64","Do you want to create a windows 64bit build")
 	yes("Linux","I cannot build for Linux yet, but do you want to create a file in a separate Linux folder for further packaging")
+	pask("Libs","Where are your external libraries for Ryanna stored?",path.Dir(qff.PWD())+"/RyannaLibs")
 }
