@@ -22,22 +22,32 @@
 	to the project the exceptions are needed for.
 Version: 17.12.29
 */
+
 package main
 
+import(
+	"trickyunits/mkl"
+	"trickyunits/qstr"
+	"trickyunits/ansistring"
+)
 
-import "trickyunits/mkl"
-import "trickyunits/gini"
-import "runtime"
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.29")
-mkl.Lic    ("Ryanna - Builder for jcr based love projects - globals.go","GNU General Public License 3")
+mkl.Version("Ryanna - Builder for jcr based love projects - initiallist.go","17.12.29")
+mkl.Lic    ("Ryanna - Builder for jcr based love projects - initiallist.go","GNU General Public License 3")
 }
 
-
-var platform = runtime.GOOS
-
-var project string
-var prjgini gini.TGINI
-
-var dirstoprocess []string
+func initlist(tag,question string) {
+	if prjgini.ListExists(tag) { return }
+	aprintln("yellow",question)
+	aprintln("lblue","You can end by just pressing ENTER")
+	for{
+		myline:=qstr.RawInput(ansistring.SCol(">",ansistring.A_Red,0))
+		if myline!="" {
+			prjgini.Add(tag,myline)
+		} else {
+			prjgini.SaveSource(project)
+			return
+		}
+	}
+}

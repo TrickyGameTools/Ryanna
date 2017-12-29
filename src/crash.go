@@ -25,19 +25,23 @@ Version: 17.12.29
 package main
 
 
-import "trickyunits/mkl"
-import "trickyunits/gini"
-import "runtime"
+import (
+	"os"
+	"trickyunits/mkl"
+)
+
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.29")
-mkl.Lic    ("Ryanna - Builder for jcr based love projects - globals.go","GNU General Public License 3")
+mkl.Version("Ryanna - Builder for jcr based love projects - crash.go","17.12.29")
+mkl.Lic    ("Ryanna - Builder for jcr based love projects - crash.go","GNU General Public License 3")
 }
 
+func crash(errmessage string){
+	nferror(errmessage)
+	os.Exit(5)
+}
 
-var platform = runtime.GOOS
-
-var project string
-var prjgini gini.TGINI
-
-var dirstoprocess []string
+func nferror(errmessage string){ // Non Fatal error
+	aprint("red","ERROR!")
+	aprintln("yellow",errmessage)
+}

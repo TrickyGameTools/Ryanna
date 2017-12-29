@@ -25,19 +25,33 @@ Version: 17.12.29
 package main
 
 
-import "trickyunits/mkl"
-import "trickyunits/gini"
-import "runtime"
+import (
+	"os"
+	"path"
+	"strings"
+	"trickyunits/mkl"
+	"trickyunits/qff"
+)
+
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.29")
-mkl.Lic    ("Ryanna - Builder for jcr based love projects - globals.go","GNU General Public License 3")
+mkl.Version("Ryanna - Builder for jcr based love projects - loveversion.go","17.12.29")
+mkl.Lic    ("Ryanna - Builder for jcr based love projects - loveversion.go","GNU General Public License 3")
 }
 
-
-var platform = runtime.GOOS
-
-var project string
-var prjgini gini.TGINI
-
-var dirstoprocess []string
+func loveversion(){
+	me,err:=os.Executable()
+	if err!=nil { crash(err.Error()) }
+	me = strings.Replace(me,"\\","/",-2)
+	mydir := path.Dir(me)
+	versions,verr:=qff.GetDir(mydir+"/Love",2,false)
+	if verr!=nil { crash(verr.Error()) }
+	if prjgini.C("LOVEVERSION")=="" {
+		aprintln("yellow","I'd like to know for which LOVE version you'd like to build")
+		for _,ver := range versions {
+			aprint("red","= ")
+			aprintln("cyan",ver)
+		}
+	}
+	ask("LOVEVERSION","Love version:","")
+}

@@ -25,9 +25,10 @@ Version: 17.12.29
 package main
 
 import (
-	"os"
+//	"os"
 	"fmt"
 	"path"
+	"flag"
 	"trickyunits/gini"
 	"trickyunits/mkl"
 	"trickyunits/qff"
@@ -48,7 +49,7 @@ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.go","GNU Genera
 cols["lblue"] = ac{ansistring.A_Blue,ansistring.A_Bright}
 cols["yellow"] = ac{ansistring.A_Yellow,0}
 cols["cyan"] = ac{ansistring.A_Cyan,0}
-cols["red"] = ac{ansistring.A_Cyan,0}
+cols["red"] = ac{ansistring.A_Red,0}
 cols["magenta"] = ac{ansistring.A_Magenta,0}
 cols["bcyan"] = ac{ansistring.A_Cyan,ansistring.A_Blink}
 
@@ -74,17 +75,24 @@ func main(){
 	aprint  ("lblue",  "Ryanna ")
 	aprintln("yellow", version )
 	aprintln("cyan","(c) Jeroen P. Broks 2017-20",qstr.Left(version,2),"\n")
-	if len(os.Args)<2 {
+	flagtest:=flag.Bool("t",false,"Test build")
+	flagrun:=flag.Bool("r",false,"Run immediately after building (only works if the project is build on this platform as well)")
+	flag.Parse()
+	Args:=flag.Args()
+	if len(Args)<1 {
 		aprint  ("red","usage: ")
 		aprint  ("yellow","Ryanna ")
+		aprint  ("magenta","[flags] ")
 		aprint  ("cyan","<Project> ")
 		aprintln("magenta","[buildmode]\n\n")
+		flag.PrintDefaults()
 		aprint  ("yellow","Ryanna saves project files in GINI format if they get modified during the process only.\nRyanna can support multiple build modes if none are given Ryanna uses the mode top in line.\n\n")
 		aprintln("yellow","This version of Ryanna was built on the next source files:")
 		aprintln("cyan",mkl.ListAll())
 		return
 	}
-	project = os.Args[1]
+	
+	project = Args[0]
 	if path.Ext(project)=="" { project+=".rpf" } // rpf = Ryanna Project File
 	if !qff.Exists(project) {
 		if yes("","The project "+project+" does not yet exist!\nShall I create it for you") {
@@ -100,6 +108,10 @@ func main(){
 		aprintln("cyan",project)
 		prjgini = gini.ReadFromFile(project)
 	}
+	if *flagtest { aprint("yellow","Flag: "); aprintln("cyan","Test build") }
+	if *flagrun  { aprint("yellow","Flag: "); aprintln("cyan","Run after build") }
 	askmeta()
 	asksys()  // located in meta.go
+	askdirs()
+	loveversion()
 }
