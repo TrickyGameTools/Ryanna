@@ -1,4 +1,6 @@
 *
+!script/*
+!script
 !src
 !src/*
 !*.md
