@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.29
+Version: 17.12.30
 */
 package main
 
@@ -36,7 +36,7 @@ import (
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","17.12.29")
+mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","17.12.30")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - meta.go","GNU General Public License 3")
 }
 
