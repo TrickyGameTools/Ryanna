@@ -28,6 +28,7 @@ package main
 import (
 	"os"
 	"trickyunits/mkl"
+	"trickyunits/dirry"
 )
 
 
@@ -36,3 +37,21 @@ mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","17.12.30
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
+
+func md(d string){
+	// Create new swap and make sure all the swap is clean!
+	err:=os.RemoveAll(dirry.Dirry(d))
+	if err!=nil { crash ( err.Error() ) }
+	err=os.MkdirAll(dirry.Dirry(d),0777)
+	if err!=nil { crash ( err.Error() ) }
+}
+
+func gather(){
+	aprint("cyan","Organising swap")
+	swap:="$AppSupport$/$LinuxDot$Phantasar Productions/Ryanna/swap/"
+	swapbase:=swap+"BaseShit/"
+	swapbuild:=swap+"Build/"
+	md(swapbase)
+	md(swapbuild)
+	
+}

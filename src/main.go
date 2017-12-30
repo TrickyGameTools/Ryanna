@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.29
+Version: 17.12.30
 */
 package main
 
@@ -44,7 +44,7 @@ type ac struct{
 var cols = map[string] ac {}
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - main.go","17.12.29")
+mkl.Version("Ryanna - Builder for jcr based love projects - main.go","17.12.30")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.go","GNU General Public License 3")
 cols["lblue"] = ac{ansistring.A_Blue,ansistring.A_Bright}
 cols["yellow"] = ac{ansistring.A_Yellow,0}
@@ -110,8 +110,10 @@ func main(){
 	}
 	if *flagtest { aprint("yellow","Flag: "); aprintln("cyan","Test build") }
 	if *flagrun  { aprint("yellow","Flag: "); aprintln("cyan","Run after build") }
+	// Let's get ready to rumble!
 	askmeta()
 	asksys()  // located in meta.go
 	askdirs()
 	loveversion()
+	gather(*flagtest)
 }
