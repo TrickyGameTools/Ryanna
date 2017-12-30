@@ -201,3 +201,99 @@ for i=1,len(haystack) do
     end
 return ret    
 end
+
+
+
+
+function safestring(s)
+local allowed = "qwertyuiopasdfghjklzxcvbnmmQWERTYUIOPASDFGHJKLZXCVBNM 12345678890-_=+!@#$%^&*():;/<>[]{}.,"
+local i
+local safe = true
+local alt = ""
+for i=1,len(s) do
+    safe = safe and (findstuff(allowed,mid(s,i,1))~=nil)
+    alt = alt .."\\"..string.byte(mid(s,i,1),1)
+    end
+-- print("DEBUG: Testing string"); if safe then print("The string "..s.." was safe") else print("The string "..s.." was not safe and was reformed to: "..alt) end    
+local ret = { [true] = s, [false]=alt }
+-- print("returning "..ret[safe])
+return ret[safe]     
+end 
+
+
+
+
+
+-- Serializing
+function TRUE_SERIALIZE(vname,vvalue,tabs,noenter)
+local ret = ""
+local work = {
+                ["nil"]        = function() return "nil" end,
+                ["number"]     = function() return vvalue end,
+                ["function"]   = function() return "'!ERROR! -- I cannot handle functions!'" end,
+                ["string"]     = function() return "\""..safestring(vvalue).."\"" end,
+                ["boolean"]    = function() return ({[true]="true",[false]="false"})[vvalue] end,
+                ["table"]      = function()
+                                 local titype
+                                 local tindex = {
+                                                   ["number"]     = function(v) return v end,
+                                                   ["boolean"]    = function(v) return ({[true]="true",[false]="false"})[v] end,
+                                                   ["string"]     = function(v) return "\""..safestring(v).."\"" end
+                                 }
+                                 local wrongindex = function() print("!ERROR! Type "..titype.." can not be used as a table in serializing") return "!WRONGINDEX" end
+                                 local ret = "{"
+                                 local k,v
+                                 local result
+                                 local notfirst
+                                 for k,v in pairs(vvalue) do
+                                     if notfirst then ret = ret .. ",\n" else notfirst=true ret = ret .."\n" end
+                                     titype = type(k)
+                                     result = (tindex[titype] or wrongindex)(k)
+                                     -- print(titype.."/"..k)
+                                     ret = ret .. TRUE_SERIALIZE("["..result.."]",v,(tabs or 0)+1,true)
+                                     end
+                                 if notfirst then    
+                                   ret = ret .."\n"    
+                                   for i=1,(tabs or 0) do ret = ret .."\t" end   
+                                   for i=1,len(vname.." = ") do ret = ret .. " " end
+                                   end 
+                                 ret = ret .. "}"  
+                                 return ret  
+                                 end 
+                                   
+             }             
+local letsgo = work[type(vvalue)] or function() print("!ERROR! Unknown type. Cannot serialize","Variable,"..vname..";Type Value,"..type(vvalue)) return "whatever" end
+local i
+for i=1,(tabs or 0) do ret = ret .."\t" end
+if vname then 
+   ret = ret .. vname .." = "..letsgo()
+   else
+   ret = letsgo()
+   end 
+if not noenter then ret = ret .."\n" end
+return ret
+end
+
+
+function serialize(vname,variableitself)
+local ret = ""
+local v = variableitself 
+if vname then 
+   v = v or _G[vname] 
+   if type(vname)~='string' then print("First variable must be the name to return in the serializer string") end
+   end
+ret = TRUE_SERIALIZE(vname,v)
+-- JBCSYSTEM.Returner(ret)
+return ret
+end
+
+function sval(a)
+return 
+  (({
+     ['string']=function() return a end,
+     ['number']=function() return a end,
+     ['boolean']=function() if a then return 'true' else return 'false' end     end
+  })[type(a)] or function() return "<< "..type(a).." >>" end)()
+end  
+
+
