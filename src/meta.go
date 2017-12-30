@@ -51,6 +51,7 @@ func askmeta(){
 func asksys() { // strictly speaking not meta, but handier to have it here.
 	pask("Release","Release dir:","")
 	pask("Test","Test dir:","")
+	 ask("Exe","Executable name",prjgini.C("Title"))
 	if !qff.Exists(prjgini.C("Release."+platform)) {
 		if yes("","Release dir does not yet exist. Create it? ") {
 			os.MkdirAll(prjgini.C("Release."+platform),0777)

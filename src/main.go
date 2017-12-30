@@ -116,4 +116,5 @@ func main(){
 	askdirs()
 	loveversion()
 	gather(*flagtest)
+	release(*flagtest)
 }

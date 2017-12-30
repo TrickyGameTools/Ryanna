@@ -28,14 +28,19 @@ package main
 import "trickyunits/mkl"
 import "trickyunits/gini"
 import "runtime"
+import "os"
+import "path"
 
 func init(){
 mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.30")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - globals.go","GNU General Public License 3")
+me,_ = os.Executable()
+mydir = path.Dir(me)
 }
 
 
 var platform = runtime.GOOS
+var me,mydir string
 
 var project string
 var prjgini gini.TGINI
@@ -46,3 +51,5 @@ var script = map[string] string {}
 
 
 var Args []string
+
+var runfile string
