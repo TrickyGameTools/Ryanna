@@ -1,4 +1,22 @@
 --[[
+  main.lua
+  
+  version: 17.12.30
+  Copyright (C) 2017 Jeroen P. Broks
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
+]]--[[
 	Ryanna - Script
 	
 	
@@ -25,10 +43,13 @@ Version: 17.12.30
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - basis.lua","17.12.30")
-mkl.lic    ("Ryanna - Builder for jcr based love projects - basis.lua","GNU General Public License 3")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","17.12.30")
+mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
+
+RYANNA_MAIN_SCRIPT = "$RyannaMainScript$"
+RYANNA_LOAD_JCR    = "$RyannaLoadJCR$"     -- quotes will be removed. I've set it up as a string to deceive parse error checking IDEs, as they would otherwise go crazy.
 
 Ryanna = {
 	RyannaVersion = "$RyannaVersion$",
@@ -40,7 +61,7 @@ Ryanna = {
 
 -- include use.Lua and jcr6.lua which now have not made their official entrace, so I gotta call them manually
 function load_primary_dependencies()
-	for _,dep in {"jcr6.lua","use.lua"}
+	for _,dep in {"jcr6.lua","use.lua","preprocess.lua"}
 		chunk, errormsg = love.filesystem.load( name )
 		assert(chunk,errormsg)
 		chunk()
@@ -202,6 +223,13 @@ for i=1,len(haystack) do
 return ret    
 end
 
+function prefixed(str,prefix)
+	return left(str,#prefix)==prefixed
+end
+
+function suffixed(str,prefix)
+	return right(str,#prefix)==prefixed
+end
 
 
 
@@ -298,5 +326,5 @@ end
 
 
 -- All done, let's now load the main script and start it all up.
-assert(RYANNA_MAIN_SCRIPT,"There has no script been assigned as main script!")
+assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been assigned as main script!")
 Use(RYANNA_MAIN_SCRIPT)

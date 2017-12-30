@@ -1,4 +1,21 @@
 --[[
+  jcr6.lua
+  Ryanna - Script
+  version: 17.12.30
+  Copyright (C) 2017 Jeroen P. Broks
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any damages
+  arising from the use of this software.
+  Permission is granted to anyone to use this software for any purpose,
+  including commercial applications, and to alter it and redistribute it
+  freely, subject to the following restrictions:
+  1. The origin of this software must not be misrepresented; you must not
+     claim that you wrote the original software. If you use this software
+     in a product, an acknowledgment in the product documentation would be
+     appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and must not be
+     misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source distribution.
 	Ryanna - Script
 	
 	
@@ -61,7 +78,7 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 	return ret
 end
 
-function JCR_B(j,nameentry)
+function JCR_B(j,nameentry,lines)
 	local mj
 	if not nameentry then
 		entry = string.upper(j)
@@ -86,10 +103,60 @@ function JCR_B(j,nameentry)
 	sl = bt:readlines()
 	assert(sl[1]=="OK",sl[2])
 	bt:close()
-	s = ""
-	for i=2,#sl do s = s .. sl[i] .. "\n" end
+	if lines then
+		s = {}
+		for i=2,#sl do s[#s+1] = sl[i] end
+	else
+		s = ""
+		for i=2,#sl do s = s .. sl[i] .. "\n" end
+	end
 	return s
 end
+
+function JCR_Lines(j,nameentry)
+	return JCR_B(j,nameentry,true)
+end
+
+function JCR_Exists(j,nameentry)
+	local mj
+	if not nameentry then
+		entry = string.upper(j)
+		mj = jcr
+		assert ( mj , "JCR not set!" )
+	else
+		entry = string.upper(nameentry)
+		if type(mj)=='table' then
+			mj = j
+		else 
+			mj = JCR_Dir(j)
+		end
+	end
+	e = string.upper(entry)
+	edata = mj.entries[e]
+	return edata~=nil
+end
+
+function JCR_HasDir(j,namedir)
+	local mj
+	if not namedir then
+		dir= string.upper(j)
+		mj = jcr
+		assert ( mj , "JCR not set!" )
+	else
+		dir= string.upper(namedir)
+		if type(mj)=='table' then
+			mj = j
+		else 
+			mj = JCR_Dir(j)
+		end
+	end
+	if not suffixed(dir) then dir = dir .. "/" end
+	for ent,_ in pairs(mj) do
+		if prefixed(ent,dir) then return true end
+	end
+	return false
+end
+
 
 
 function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna's findings.
@@ -106,10 +173,10 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	end
 	return ret
 end
-BaseDir()
+jcr = BaseDir()
 
 
 --[[
 mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","17.12.30")
-mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","GNU General Public License 3")
+mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
