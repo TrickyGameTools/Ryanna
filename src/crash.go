@@ -42,6 +42,6 @@ func crash(errmessage string){
 }
 
 func nferror(errmessage string){ // Non Fatal error
-	aprint("red","ERROR!")
+	aprint("red","ERROR!    ")
 	aprintln("yellow",errmessage)
 }

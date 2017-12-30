@@ -26,6 +26,7 @@ package main
 
 
 import(
+	"strings"
 	"trickyunits/mkl"
 	"trickyunits/qff"
 )
@@ -46,9 +47,20 @@ func scansrcdir(d string){
 	aprint  ("yellow","Scanning source: ")
 	aprintln("cyan"  ,d)
 	for _,sd:=range(dirs) {
-		pask("SOURCE['"+d+"/"+sd+"'].TYPE",sd+"    ","NONE")
-		 ask("SOURCE['"+d+"/"+sd+"'].AUTHOR","Author of this dir: ",sd)
-		 ask("SOURCE['"+d+"/"+sd+"'].LICENSE","License:","Unknown license")
+		t:=pask("SOURCE['"+d+"/"+sd+"'].TYPE",sd+"    ","NONE")
+		    ask("SOURCE['"+d+"/"+sd+"'].AUTHOR","Author of this dir: ",sd)
+		    ask("SOURCE['"+d+"/"+sd+"'].LICENSE","License:","Unknown license")
+		mayadd:=t=="ALL"
+		mode:=prjgini.ListIndex("BuildModes",0)
+		if len(Args)>1 { mode=Args[1] }
+		ts:=strings.Split(t," ")
+		for _,st:=range ts{
+			mayadd = mayadd || st==mode
+		}
+		mayadd = mayadd && t!="NONE"
+		if mayadd {
+			dirstoprocess = append(dirstoprocess,d+"/"+sd)
+		}
 	}
 }
 

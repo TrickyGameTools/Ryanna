@@ -43,3 +43,6 @@ var prjgini gini.TGINI
 var dirstoprocess []string
 
 var script = map[string] string {}
+
+
+var Args []string

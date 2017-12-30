@@ -27,8 +27,13 @@ package main
 
 import (
 	"os"
+	"strings"
 	"trickyunits/mkl"
+	"trickyunits/qff"
 	"trickyunits/dirry"
+	"trickyunits/shell"
+	"trickyunits/tree"
+
 )
 
 
@@ -46,12 +51,73 @@ func md(d string){
 	if err!=nil { crash ( err.Error() ) }
 }
 
-func gather(){
-	aprint("cyan","Organising swap")
+func zip(dir,zipf string){
+	od:=qff.PWD()
+	err:=os.Chdir(dirry.Dirry(dir))
+	if err!=nil { crash(err.Error()) }
+	shell.Shell("zip -r -9 '"+dirry.Dirry(zipf)+"' *")
+	os.Chdir(od)
+}
+
+func gather(test bool){
+	aprintln("cyan","Organising swap")
 	swap:="$AppSupport$/$LinuxDot$Phantasar Productions/Ryanna/swap/"
 	swapbase:=swap+"BaseShit/"
 	swapbuild:=swap+"Build/"
+	zipf:=swapbuild+"zipped.zip"
+	jcrf:=swapbuild+"packed.jcr"
+	love:=swapbuild+"love.love"
+	MainScript:=ask("MainScript","Main Script:","Script/Ryanna_Main.lua")
+	sig:=""
+	if prjgini.C("Package")=="JCR" { sig = ask("JCRSIG","JCR signature","" ) }
+	calljcr:=test || prjgini.C("package")=="JCR"
+	jif:=""
+	if calljcr {
+		jif += "SIGNATURE:"+sig+"\n"
+		jif += "FATSTORAGE:BRUTE\n"
+	}
 	md(swapbase)
 	md(swapbuild)
-	
+	for f,str := range script {
+		bstr:=str
+		bstr = strings.Replace(bstr,"$RyannaMainScript$",MainScript,-10)
+		if prjgini.C("Package")=="JCR" { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","true",-11) } else { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","false",-12) }
+		bstr = strings.Replace(bstr,"$RyannaVersion$",mkl.Newest(),-14)
+		err := qff.WriteStringToFile(dirry.Dirry(swapbase+f+".lua"),bstr)
+		if err!=nil { crash(err.Error()) }
+	}
+	zip(swapbase,zipf)
+	// All preps done, now to gather it all
+	for _,d:=range dirstoprocess {
+		aprint  ("yellow","Gathering: ")
+		aprintln("cyan",d)
+		if test {
+			jif += "REQUIRE:"+d+"\n"
+		} else if prjgini.C("Package")=="JCR" {
+			jtree:=tree.GetTree(d,false)
+			for _,jtf:=range jtree{
+				jif += "FILE:"+d+"/"+jtf+"\n"
+				jif += "TARGET:"+jtf+"\n"
+				jif += "AUTHOR:"+prjgini.C("SOURCE['"+d+"/"+jtf+"'].AUTHOR")+"\n"
+				jif += "NOTES:"+prjgini.C("SOURCE['"+d+"/"+jtf+"'].LICENSE")+"\n"
+				jif += "STORAGE:BRUTE\n"
+			}
+		} else {
+			zip(d,zipf)
+		}
+	}
+	if calljcr {
+		aprintln("cyan","Creating JCR6 work file")
+		jifile:=dirry.Dirry(swapbuild)+"JCR_Instruction_File.jif"
+		err:=qff.WriteStringToFile(jifile,jif)
+		if err!=nil { crash(err.Error()) }
+		shell.Shell("jcr6_add -jif '"+jifile+"' '"+dirry.Dirry(jcrf)+"'")
+		aprintln("cyan","Merging")
+		if platform=="windows"{
+			shell.Shell("copy/b \""+dirry.Dirry(jcrf)+"\"+\""+dirry.Dirry(zipf)+"\" \""+dirry.Dirry(love)+"\"")
+		} else {
+			shell.Shell("cat \""+dirry.Dirry(jcrf)+"\" \""+dirry.Dirry(zipf)+"\" > \""+dirry.Dirry(love)+"\"")
+		}
+	}
+
 }

@@ -78,7 +78,7 @@ func main(){
 	flagtest:=flag.Bool("t",false,"Test build")
 	flagrun:=flag.Bool("r",false,"Run immediately after building (only works if the project is build on this platform as well)")
 	flag.Parse()
-	Args:=flag.Args()
+	Args=flag.Args()
 	if len(Args)<1 {
 		aprint  ("red","usage: ")
 		aprint  ("yellow","Ryanna ")
