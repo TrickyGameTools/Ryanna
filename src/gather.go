@@ -92,7 +92,7 @@ func gather(test bool){
 		aprint  ("yellow","Gathering: ")
 		aprintln("cyan",d)
 		if test {
-			jif += "REQUIRE:"+d+"\n"
+			jif += "IMPORT:"+d+"\n"
 		} else if prjgini.C("Package")=="JCR" {
 			jtree:=tree.GetTree(d,false)
 			for _,jtf:=range jtree{
