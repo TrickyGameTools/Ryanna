@@ -20,16 +20,18 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.30
+Version: 17.12.31
 */
 package main
 
 
 import (
 	"os"
+	"path"
 	"strings"
 	"trickyunits/mkl"
 	"trickyunits/qff"
+	"trickyunits/qstr"
 	"trickyunits/dirry"
 	"trickyunits/shell"
 	"trickyunits/tree"
@@ -38,7 +40,7 @@ import (
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","17.12.30")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","17.12.31")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -59,6 +61,16 @@ func zip(dir,zipf string){
 	os.Chdir(od)
 }
 
+func ziplib(dir,lib,zipf string){
+	od:=qff.PWD()
+	libe:=lib
+	if !qstr.Suffixed(libe,".rel") { libe+=".rel" }
+	err:=os.Chdir(dirry.Dirry(dir))
+	if err!=nil { crash(err.Error()) }
+	shell.Shell("zip -r -9 '"+dirry.Dirry(zipf)+"' Libs/"+libe)
+	os.Chdir(od)
+}
+
 func gather(test bool){
 	aprintln("cyan","Organising swap")
 	swap:="$AppSupport$/$LinuxDot$Phantasar Productions/Ryanna/swap/"
@@ -68,6 +80,7 @@ func gather(test bool){
 	jcrf:=swapbuild+"packed.jcr"
 	love:=swapbuild+"love.love"
 	MainScript:=ask("MainScript","Main Script:","Script/Ryanna_Main.lua")
+	libs:=[]string{}
 	sig:=""
 	if prjgini.C("Package")=="JCR" { sig = ask("JCRSIG","JCR signature","" ) }
 	calljcr:=test || prjgini.C("package")=="JCR"
@@ -91,10 +104,28 @@ func gather(test bool){
 	for _,d:=range dirstoprocess {
 		aprint  ("yellow","Gathering: ")
 		aprintln("cyan",d)
+		jtree:=tree.GetTree(d,false)
+		for _,f:=range jtree { // looking for external lib references. The folder LIBS/ is reserved for this!
+			if path.Ext(f)==".lua" {
+				lines:=qff.GetLines(d+"/"+f)
+				for _,line:=range lines {
+					l:=strings.ToUpper(qstr.MyTrim(line))
+					   //01234567
+					pr:="-- $USE LIBS/"
+					if qstr.Left(l,len(pr))==pr {
+						found:=false
+						nl:=qstr.MyTrim(l[7:])
+						for _,lb:=range libs {
+							found=found || lb==nl
+						}
+						if !found { libs = append(libs,nl) }
+					}
+				}
+			}
+		}
 		if test {
 			jif += "IMPORT:"+d+"\n"
 		} else if prjgini.C("Package")=="JCR" {
-			jtree:=tree.GetTree(d,false)
 			for _,jtf:=range jtree{
 				jif += "FILE:"+d+"/"+jtf+"\n"
 				jif += "TARGET:"+jtf+"\n"
@@ -106,6 +137,66 @@ func gather(test bool){
 			zip(d,zipf)
 		}
 	}
+	// Map external libraries if there are any
+	libtrees:=[]string{}
+	for _,lt:=range prjgini.List("Libraries."+platform){
+		if test { 
+			jif += "IMPORT:"+lt+"\n"
+		}
+		ltd,err:=qff.GetDir(lt+"/Libs",2,false)
+		if err!=nil { crash(err.Error()) }
+		for _,actlib:=range ltd {
+			libtrees=append(libtrees,lt+"/Libs/"+actlib)
+		}
+	}
+	// Include libraries if there are any
+	for i:=0;i<len(libs);i++ {
+		lib:=libs[i]
+		clb:=strings.ToUpper(lib)
+		if !qstr.Suffixed(clb,".REL") { clb += ".REL" }
+		for _,pl:=range libtrees {
+			cpl:=strings.ToUpper(pl)
+			aprint("yellow","Importing library: ")
+			aprintln("cyan",cpl)
+			if qstr.Suffixed(cpl,clb){
+				// are there any requests for new libs?
+				jtree:=tree.GetTree(pl,false)
+				for _,f:=range jtree { // looking for external lib references. The folder LIBS/ is reserved for this!
+					if path.Ext(f)==".lua" {
+						lines:=qff.GetLines(pl+"/"+f)
+						for _,line:=range lines {
+							l:=strings.ToUpper(qstr.MyTrim(line))
+							   //01234567
+							pr:="-- $USE LIBS/"
+							if qstr.Left(l,len(pr))==pr {
+								found:=false
+								nl:=qstr.MyTrim(l[7:])
+								for _,lb:=range libs {
+									found=found || lb==nl
+								}
+								if !found { libs = append(libs,nl) }
+							}
+						}
+					}
+				}
+				if test {
+					// Do nothing. Everything that has to be done, has been done.
+				} else if prjgini.C("Package")=="JCR" {
+					for _,jtf:=range jtree{
+						jif += "FILE:"+pl+"/"+jtf+"\n"
+						jif += "TARGET:Libs/"+path.Base(pl)+"/"+jtf+"\n"
+						jif += "AUTHOR:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].AUTHOR")+"\n"
+						jif += "NOTES:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].LICENSE")+"\n"
+						jif += "STORAGE:BRUTE\n"
+					}
+				} else {
+					ziplib(path.Dir(pl)+"..",path.Base(pl),zipf)
+				}
+			}
+		}
+	}
+	
+	// jcr build
 	if calljcr {
 		aprintln("cyan","Creating JCR6 work file")
 		jifile:=dirry.Dirry(swapbuild)+"JCR_Instruction_File.jif"

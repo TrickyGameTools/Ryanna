@@ -20,14 +20,14 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.30
+Version: 17.12.31
 */
 package main
 
 
 import (
 	"os"
-	"path"
+//	"path"
 	"strings"
 	"trickyunits/mkl"
 	"trickyunits/qff"
@@ -36,7 +36,7 @@ import (
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","17.12.30")
+mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","17.12.31")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - meta.go","GNU General Public License 3")
 }
 
@@ -70,7 +70,8 @@ func asksys() { // strictly speaking not meta, but handier to have it here.
 	yes("Win32","Do you want to create a windows 32bit build")
 	yes("Win64","Do you want to create a windows 64bit build")
 	yes("Linux","I cannot build for Linux yet, but do you want to create a file in a separate Linux folder for further packaging")
-	pask("Libs","Where are your external libraries for Ryanna stored?",path.Dir(qff.PWD())+"/RyannaLibs")
+	//pask("Libs","Where are your external libraries for Ryanna stored?",path.Dir(qff.PWD())+"/RyannaLibs")
+	initlist("Libraries."+platform,"Tell me which directories you wish to use for finding libraries.")
 	initlist("buildmodes","Tell me. Which build modes do you have in mind?")
 	initlist("sources."+platform,"Now give me the list of source dirs, please")
 	for {
