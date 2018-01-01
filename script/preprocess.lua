@@ -23,11 +23,11 @@ preiftrueerror = false
 
 local defs = {}
 local plat = string.upper(love.system.getOS( ))
-if plat = "OS X" then defs["$MAC"] = true defs["$DARWIN"]=true defs["$OSX"]=true end
-if plat = "WINDOWS" then defs["$WIN"] = true defs["$WINDOWS"] = true defs["$WINDHOOS"] = true defs["$MICROSCHOFT"] = true end
-if plat = "LINUX" then defs["$LINUX"] = true defs["$INSTABIEL"] = true end
-if plat = "ANDROID" then defs["$ANDROID"] = true defs["$MOBILE"] = true end
-if plat = "IOS" then defs["$IOS"] = true defs["$MOBILE"]=true end
+if plat == "OS X" then defs["$MAC"] = true defs["$DARWIN"]=true defs["$OSX"]=true end
+if plat == "WINDOWS" then defs["$WIN"] = true defs["$WINDOWS"] = true defs["$WINDHOOS"] = true defs["$MICROSCHOFT"] = true end
+if plat == "LINUX" then defs["$LINUX"] = true defs["$INSTABIEL"] = true end
+if plat == "ANDROID" then defs["$ANDROID"] = true defs["$MOBILE"] = true end
+if plat == "IOS" then defs["$IOS"] = true defs["$MOBILE"]=true end
 
 local prid = {
 	["IF"] = function(sl,h,m,n,ld)
@@ -48,7 +48,7 @@ local prid = {
 		ok,chkf = pcall(load(pline,"$IF"))
 		if not ok then
 			print("$IF went wrong in line: "..n)
-			print("-- GENERATED CODE --"
+			print("-- GENERATED CODE --")
 			print(pline)
 			print("-- END CODE --")
 			print("error: "..chkf)
@@ -111,6 +111,7 @@ local prid = {
 			pre = pre .. asid .. " = " ..asid.. " or "
 		end
 		return h,m,pre .. " Use('"..sl[3].."') "
+	end
 
 }
 

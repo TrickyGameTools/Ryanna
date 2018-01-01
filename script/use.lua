@@ -34,7 +34,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib Licen
 -- but is not required)
 function Use(imp,noreturn)
 	-- single file
-	wimp = string.Upper(imp)
+	wimp = string.upper(imp)
 	if right(wimp,4)==".LUA" then
 		ret = PreProcess(imp)
 		if noreturn then return nil else return ret end
@@ -53,6 +53,7 @@ function Use(imp,noreturn)
 			name = left(entry.entry,#entry.entry-4)
 			pret[name] = PreProcess(entry.entry)
 		end
+	end
 	-- Count it all
 	cnt = 0
 	for k,v in pairs(pret) do cnt = cnt + 1   lk = k end
@@ -92,6 +93,6 @@ function libdestroy(lib)
 	if not lib.me then return end
 	lib.me = nil
 	local fld = {}
-	for key,v in pairs(lib) then libdestroy(v); fld[#fld+1]=key end
+	for key,v in pairs(lib)  do libdestroy(v); fld[#fld+1]=key end
 	for i,key in ipairs(fld) do lib[key] = nil end
 end

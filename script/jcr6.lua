@@ -19,21 +19,29 @@
 ]]
 local ldir = love.filesystem.getSourceBaseDirectory()
 
--- $IF WNDOWS
-local jcrx = ldir+"\\jcrx"
--- $FI
--- $IF MAC
-local jcrx = ldir+"//jcrx"
--- $FI
--- $IF LINUX
-error("Sorry! I'm still working this part out for Linux")
+local jcrx
+if RYANNA_LOAD_JCR then
+	if platform == "Windows" then
+		jcrx = ldir.."\\jcrx"
+	elseif platform == "OS X" then
+		jcrx = ldir.."//jcrx"
+	elseif platform == "Linux" then
+		error("Sorry! I'm still working this part out for Linux")
+	else 
+		error("Sorry! This game cannot work on "..platform..". At least not in the way it's currently build. And no, that will very likely never be possible either.\nBut fear not, as it may be possible in a different building type.\nNotify the developer and tell him/her of this error.")
+	end
+end
 -- $FI
 
 function JCR_Dir(jfile)
-	bt = io.popen(jcrx.." dirout '"..jfile.."' lua")
-	sl = bt:readlines()
-	assert(sl[1]=="OK",sl[2])	
+	local jcall = "'"..jcrx.."' dirout '"..jfile.."' lua"
+	print ("debug> ",jcall)
+	bt = io.popen(jcall)
+	-- sl = bt:readlines()
+	sl = {}
+	for rl in bt:lines() do sl[#sl+1]=rl end
 	bt:close()
+	assert(sl[1]=="OK","JCR-Dirout failure "..jfile.."\n"..(sl[2] or sl[1] or "No error message provided"))
 	s = ""
 	for i=2,#sl do s = s .. sl[i] .. "\n" end
 	f=load(s,"JCR_DIR("..jfile..")")
@@ -52,7 +60,7 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 			entries[#entries+1] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
 		end
 	end
-	ret = { entries = entries, ret.from = love.filesystem.getSource(), ret.kind="LOVE" }
+	ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
 	return ret
 end
 
@@ -72,7 +80,7 @@ function JCR_B(j,nameentry,lines)
 	end
 	e = string.upper(entry)
 	edata = mj.entries[e]
-	assert(edata,"Entry "+entry+" not found")
+	assert(edata,"Entry "..entry.." not found")
 	if not edata then return end -- Make sure nothing bad happens in case of a pcall
 	if edata.LOVE then
 		return love.filesystem.read(edata.LOVE)
@@ -140,7 +148,7 @@ end
 function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna's findings.
 	ret = {}
 	ret.entries = {}
-	ret.from = love.filesystem.GetSource()
+	ret.from = love.filesystem.getSource()
 	ret.kind = "MIXED"
 	
 	k = {}

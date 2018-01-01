@@ -28,6 +28,8 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib Lice
 RYANNA_MAIN_SCRIPT = "$RyannaMainScript$"
 RYANNA_LOAD_JCR    = "$RyannaLoadJCR$"     -- quotes will be removed. I've set it up as a string to deceive parse error checking IDEs, as they would otherwise go crazy.
 
+platform = love.system.getOS( )
+
 Ryanna = {
 	RyannaVersion = "$RyannaVersion$",
 	LuaVersion = _VERSION,
@@ -38,8 +40,8 @@ Ryanna = {
 
 -- include use.Lua and jcr6.lua which now have not made their official entrace, so I gotta call them manually
 function load_primary_dependencies()
-	for _,dep in {"jcr6.lua","use.lua","preprocess.lua"}
-		chunk, errormsg = love.filesystem.load( name )
+	for _,dep in ipairs( {"jcr6.lua","use.lua","preprocess.lua"} ) do
+		chunk, errormsg = love.filesystem.load( dep )
 		assert(chunk,errormsg)
 		chunk()
 	end
