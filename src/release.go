@@ -4,7 +4,7 @@
 	
 	
 	
-	(c) Jeroen P. Broks, 2017, All rights reserved
+	(c) Jeroen P. Broks, 2017, 2018, All rights reserved
 	
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.30
+Version: 18.01.01
 */
 package main
 
@@ -36,7 +36,7 @@ import(
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - release.go","17.12.30")
+mkl.Version("Ryanna - Builder for jcr based love projects - release.go","18.01.01")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - release.go","GNU General Public License 3")
 }
 
@@ -70,7 +70,11 @@ func release_darwin(target,suf string){
 	err=qff.CopyFile(icon,exe+"/Contents/Resources/love.icns"); if err!=nil { crash(err.Error()) }
 	aprintln("yellow","Mac: Attaching icon")
 	err=qff.CopyFile(icon,exe+"/Contents/Resources/GameIcon.icns"); if err!=nil { crash(err.Error()) }
-	err=qff.CopyFile(icon,exe+"/Contents/Resources/OS X AppIcon.icns"); if err!=nil { crash(err.Error()) }	
+	err=qff.CopyFile(icon,exe+"/Contents/Resources/OS X AppIcon.icns"); if err!=nil { crash(err.Error()) }
+	if suf!="" || prjgini.C("Package")=="JCR" {
+		aprintln("yellow","Mac: Attaching jcrx")
+		err=qff.CopyFile(mydir+"/jcrx/jcrx_darwin",exe+"/Contents/Resources/jcrx"); if err!=nil { crash(err.Error()) }
+	}
 	if platform=="darwin" { runfile = "open "+target+exe+".app" }
 	os.Chdir(pwd)
 }
@@ -102,11 +106,15 @@ func release_windows(target,suf string,bit int) {
 	swapbuild:=swap+"Build/"
 	orilove:=swapbuild+"love.love"
 	err=qff.CopyFile(orilove,prjgini.C("Exe")+".love"); if err!=nil { crash(err.Error()) }
+	if suf!="" || prjgini.C("Package")=="JCR" {
+		aprintln("yellow",wd+": Attaching jcrx")
+		err=qff.CopyFile(mydir+"/jcrx/jcrx_windows","jcrx.exe"); if err!=nil { crash(err.Error()) }
+	}
 	if platform=="window" && bit==32 { runfile = target+exe+".exe" }
 }
 
 func release_linux(target,suf string) {
-	aprintln("Linux will be taken care of later!")
+	aprintln("red","Linux will be taken care of later!")
 }
 
 func release(test bool){
