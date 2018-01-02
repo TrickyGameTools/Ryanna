@@ -88,20 +88,30 @@ function JCR_B(j,nameentry,lines)
 		return love.filesystem.read(edata.LOVE)
 	end
 	local bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
-	-- sl = bt:readlines()
-	local sl = {}
-	local s
-	for rsl in bt:lines() do sl[#sl+1]=rsl end 
-  bt:close()
-	assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")
 	if lines then
-		s = {}
-		for i=2,#sl do s[#s+1] = sl[i] end
+	 -- sl = bt:readlines()
+	 local sl = {}
+	 local s
+	 for rsl in bt:lines() do sl[#sl+1]=rsl end 
+    bt:close()
+	 assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")
+	 -- if lines then
+		  s = {}
+		  for i=2,#sl do s[#s+1] = sl[i] end
+	 --[[ else
+		  s = ""
+		  for i=2,#sl do s = s .. sl[i] .. "\n" end
+	 --end ]]
+	 return s
 	else
-		s = ""
-		for i=2,#sl do s = s .. sl[i] .. "\n" end
+	  local head=bt:read(3)
+	  local data=bt:read('*all')
+	  assert(head=="OK\n","JCR_B failed "..(data or "Unprintable error"))
+	  bt:close()
+	  --print(data)
+    return data
 	end
-	return s
+	
 end
 
 function JCR_Lines(j,nameentry)

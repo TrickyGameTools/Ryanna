@@ -116,7 +116,7 @@ local prid = {
 }
 
 function PreProcess(file)
-  local debug = true
+  local debug = false
 	local d = JCR_Lines(file)
 	local haveif
 	local muteif
