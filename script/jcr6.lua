@@ -36,15 +36,16 @@ end
 function JCR_Dir(jfile)
 	local jcall = "'"..jcrx.."' dirout '"..jfile.."' lua"
 	print ("debug> ",jcall)
-	bt = io.popen(jcall)
+	local bt = io.popen(jcall)
 	-- sl = bt:readlines()
-	sl = {}
+	local sl = {}
 	for rl in bt:lines() do sl[#sl+1]=rl end
 	bt:close()
 	assert(sl[1]=="OK","JCR-Dirout failure "..jfile.."\n"..(sl[2] or sl[1] or "No error message provided"))
-	s = ""
+	local s = ""
 	for i=2,#sl do s = s .. sl[i] .. "\n" end
-	f=load(s,"JCR_DIR("..jfile..")")
+	local f=load(s,"JCR_DIR("..jfile..")")
+	local ret={}
 	ret.entries = f()
 	ret.JCR_B = JCR_B
 	ret.from = jfile
@@ -60,12 +61,12 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 			entries[#entries+1] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
 		end
 	end
-	ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
+	local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
 	return ret
 end
 
 function JCR_B(j,nameentry,lines)
-	local mj
+	local mj,entry
 	if not nameentry then
 		entry = string.upper(j)
 		mj = jcr
@@ -78,17 +79,21 @@ function JCR_B(j,nameentry,lines)
 			mj = JCR_Dir(j)
 		end
 	end
-	e = string.upper(entry)
-	edata = mj.entries[e]
+	local e = string.upper(entry)
+	local edata = mj.entries[e]
+	--print(serialize('jcr',mj)) -- debug line
 	assert(edata,"Entry "..entry.." not found")
 	if not edata then return end -- Make sure nothing bad happens in case of a pcall
 	if edata.LOVE then
 		return love.filesystem.read(edata.LOVE)
 	end
-	bt = io.popen(jcrx.." typeout '"..mj.from.."' '"..entry.."'")
-	sl = bt:readlines()
-	assert(sl[1]=="OK",sl[2])
-	bt:close()
+	local bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
+	-- sl = bt:readlines()
+	local sl = {}
+	local s
+	for rsl in bt:lines() do sl[#sl+1]=rsl end 
+  bt:close()
+	assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")
 	if lines then
 		s = {}
 		for i=2,#sl do s[#s+1] = sl[i] end
@@ -149,13 +154,17 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	ret = {}
 	ret.entries = {}
 	ret.from = love.filesystem.getSource()
-	ret.kind = "MIXED"
-	
-	k = {}
+	ret.kind = "MIXED"	
+	local k = {}
 	k[1] = LOVE_Dir()
 	if RYANNA_LOAD_JCR then k[2] = JCR_Dir(ret.from) end
 	for i,d in ipairs(k) do
-		for key,entry in pairs(d) do ret.entries[#ret.entries+1] = entry end
+		for key,res in pairs(d) do 
+		  if key=="entries" then
+		    for ekey,edata in pairs(res) do
+		      ret.entries[ekey] = edata end
+		    end
+		  end
 	end
 	return ret
 end

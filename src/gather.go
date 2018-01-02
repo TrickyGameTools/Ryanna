@@ -96,6 +96,7 @@ func gather(test bool){
 	for f,str := range script {
 		bstr:=str
 		bstr = strings.Replace(bstr,"$RyannaMainScript$",MainScript,-10)
+		bstr = strings.Replace(bstr,"$RyannaTitle$",prjgini.C("Title"),-10)
 		if prjgini.C("Package")=="JCR" { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","true",-11) } else { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","false",-12) }
 		bstr = strings.Replace(bstr,"$RyannaVersion$",mkl.Newest(),-14)
 		err := qff.WriteStringToFile(dirry.Dirry(swapbase+f+".lua"),bstr)

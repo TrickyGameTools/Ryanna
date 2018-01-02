@@ -27,6 +27,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib Lice
 
 RYANNA_MAIN_SCRIPT = "$RyannaMainScript$"
 RYANNA_LOAD_JCR    = "$RyannaLoadJCR$"     -- quotes will be removed. I've set it up as a string to deceive parse error checking IDEs, as they would otherwise go crazy.
+RYANNA_TITLE       = "$RyannaTitle$"; love.window.setTitle(RYANNA_TITLE)
 
 platform = love.system.getOS( )
 
@@ -194,9 +195,9 @@ end
 function findstuff(haystack,needle) -- BLD: Returns the position on which a substring (needle) is found inside a string or (array)table (haystrack). If nothing if found it will return nil.<p>Needle must be a string if haystack is a string, if haystack is a table, needle can be any type.
 local ret = nil
 local i
-for i=1,len(haystack) do
+for i=1,#haystack do
     if type(haystack)=='table'  and needle==haystack[i] then ret = ret or i end
-    if type(haystack)=='string' and needle==mid(haystack,i,len(needle)) then ret = ret or i end
+    if type(haystack)=='string' and needle==mid(haystack,i,#needle) then ret = ret or i end
     -- rint("finding needle: "..needle) if ret then print("found at: "..ret) end print("= Checking: "..i.. " >> "..mid(haystack,i,len(needle)))
     end
 return ret    
@@ -217,7 +218,7 @@ local allowed = "qwertyuiopasdfghjklzxcvbnmmQWERTYUIOPASDFGHJKLZXCVBNM 123456788
 local i
 local safe = true
 local alt = ""
-for i=1,len(s) do
+for i=1,#s do
     safe = safe and (findstuff(allowed,mid(s,i,1))~=nil)
     alt = alt .."\\"..string.byte(mid(s,i,1),1)
     end
@@ -234,6 +235,7 @@ end
 -- Serializing
 function TRUE_SERIALIZE(vname,vvalue,tabs,noenter)
 local ret = ""
+local len = function(s) return #s end
 local work = {
                 ["nil"]        = function() return "nil" end,
                 ["number"]     = function() return vvalue end,

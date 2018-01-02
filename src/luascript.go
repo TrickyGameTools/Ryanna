@@ -8,8 +8,8 @@ func init(){
 	script["preprocess"] = `--[[
   preprocess.lua
   
-  version: 17.12.30
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.02
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -149,8 +149,8 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 17.12.30
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.02
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -184,15 +184,16 @@ end
 function JCR_Dir(jfile)
 	local jcall = "'"..jcrx.."' dirout '"..jfile.."' lua"
 	print ("debug> ",jcall)
-	bt = io.popen(jcall)
+	local bt = io.popen(jcall)
 	-- sl = bt:readlines()
-	sl = {}
+	local sl = {}
 	for rl in bt:lines() do sl[#sl+1]=rl end
 	bt:close()
 	assert(sl[1]=="OK","JCR-Dirout failure "..jfile.."\n"..(sl[2] or sl[1] or "No error message provided"))
-	s = ""
+	local s = ""
 	for i=2,#sl do s = s .. sl[i] .. "\n" end
-	f=load(s,"JCR_DIR("..jfile..")")
+	local f=load(s,"JCR_DIR("..jfile..")")
+	local ret={}
 	ret.entries = f()
 	ret.JCR_B = JCR_B
 	ret.from = jfile
@@ -208,12 +209,12 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 			entries[#entries+1] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
 		end
 	end
-	ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
+	local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
 	return ret
 end
 
 function JCR_B(j,nameentry,lines)
-	local mj
+	local mj,entry
 	if not nameentry then
 		entry = string.upper(j)
 		mj = jcr
@@ -226,17 +227,21 @@ function JCR_B(j,nameentry,lines)
 			mj = JCR_Dir(j)
 		end
 	end
-	e = string.upper(entry)
-	edata = mj.entries[e]
+	local e = string.upper(entry)
+	local edata = mj.entries[e]
+	--print(serialize('jcr',mj)) -- debug line
 	assert(edata,"Entry "..entry.." not found")
 	if not edata then return end -- Make sure nothing bad happens in case of a pcall
 	if edata.LOVE then
 		return love.filesystem.read(edata.LOVE)
 	end
-	bt = io.popen(jcrx.." typeout '"..mj.from.."' '"..entry.."'")
-	sl = bt:readlines()
-	assert(sl[1]=="OK",sl[2])
-	bt:close()
+	local bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
+	-- sl = bt:readlines()
+	local sl = {}
+	local s
+	for rsl in bt:lines() do sl[#sl+1]=rsl end 
+  bt:close()
+	assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")
 	if lines then
 		s = {}
 		for i=2,#sl do s[#s+1] = sl[i] end
@@ -297,13 +302,17 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	ret = {}
 	ret.entries = {}
 	ret.from = love.filesystem.getSource()
-	ret.kind = "MIXED"
-	
-	k = {}
+	ret.kind = "MIXED"	
+	local k = {}
 	k[1] = LOVE_Dir()
 	if RYANNA_LOAD_JCR then k[2] = JCR_Dir(ret.from) end
 	for i,d in ipairs(k) do
-		for key,entry in pairs(d) do ret.entries[#ret.entries+1] = entry end
+		for key,res in pairs(d) do 
+		  if key=="entries" then
+		    for ekey,edata in pairs(res) do
+		      ret.entries[ekey] = edata end
+		    end
+		  end
 	end
 	return ret
 end
@@ -311,7 +320,7 @@ jcr = BaseDir()
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","17.12.30")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.02")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -319,8 +328,8 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 	script["use"] = `--[[
   use.lua
   Ryanna - Script
-  version: 17.12.30
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.02
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -338,7 +347,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","17.12.30")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.02")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -419,8 +428,8 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 17.12.30
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.02
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -438,13 +447,14 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","17.12.30")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.02")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
 
 RYANNA_MAIN_SCRIPT = "$RyannaMainScript$"
 RYANNA_LOAD_JCR    = "$RyannaLoadJCR$"     -- quotes will be removed. I've set it up as a string to deceive parse error checking IDEs, as they would otherwise go crazy.
+RYANNA_TITLE       = "$RyannaTitle$"; love.window.setTitle(RYANNA_TITLE)
 
 platform = love.system.getOS( )
 
@@ -612,9 +622,9 @@ end
 function findstuff(haystack,needle) -- BLD: Returns the position on which a substring (needle) is found inside a string or (array)table (haystrack). If nothing if found it will return nil.<p>Needle must be a string if haystack is a string, if haystack is a table, needle can be any type.
 local ret = nil
 local i
-for i=1,len(haystack) do
+for i=1,#haystack do
     if type(haystack)=='table'  and needle==haystack[i] then ret = ret or i end
-    if type(haystack)=='string' and needle==mid(haystack,i,len(needle)) then ret = ret or i end
+    if type(haystack)=='string' and needle==mid(haystack,i,#needle) then ret = ret or i end
     -- rint("finding needle: "..needle) if ret then print("found at: "..ret) end print("= Checking: "..i.. " >> "..mid(haystack,i,len(needle)))
     end
 return ret    
@@ -635,7 +645,7 @@ local allowed = "qwertyuiopasdfghjklzxcvbnmmQWERTYUIOPASDFGHJKLZXCVBNM 123456788
 local i
 local safe = true
 local alt = ""
-for i=1,len(s) do
+for i=1,#s do
     safe = safe and (findstuff(allowed,mid(s,i,1))~=nil)
     alt = alt .."\\"..string.byte(mid(s,i,1),1)
     end
@@ -652,6 +662,7 @@ end
 -- Serializing
 function TRUE_SERIALIZE(vname,vvalue,tabs,noenter)
 local ret = ""
+local len = function(s) return #s end
 local work = {
                 ["nil"]        = function() return "nil" end,
                 ["number"]     = function() return vvalue end,
@@ -727,15 +738,15 @@ assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been a
 Use(RYANNA_MAIN_SCRIPT)
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","17.12.30")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.02")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","17.12.30")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.02")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","17.12.30")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.02")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 
