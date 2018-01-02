@@ -110,8 +110,28 @@ function JCR_B(j,nameentry,lines)
 	  bt:close()
 	  --print(data)
     return data
-	end
-	
+	end	
+end
+
+function JCR_GetDir(p1,p2,p3)
+   local mj,dir,trimpath = p1,p2,p3
+   if not p3 then mj,dir,trimpath=jcr,p1,p2 end
+   local cd = upper(dir)
+   local ret = {}
+   for k,v in pairs(mj.entries) do
+       if prefixed(k,cd) then
+          local ename = v.entry
+          if trimpath then ename=right(ename,#ename-#dir) end
+          ret[#ret+1] = ename
+       end
+   end
+   return ret
+end
+
+function JCR_D(file)
+     local data = JCR_B(file)
+     local fdata = love.filesystem.newFileData(data,file)
+     return fdata
 end
 
 function JCR_Lines(j,nameentry)

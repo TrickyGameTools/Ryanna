@@ -160,7 +160,7 @@ function mysplit(inputstr, sep)
         return t
 end
 
-pper = string.upper
+upper = string.upper
 lower = string.lower
 chr = string.char
 printf = string.format
