@@ -1,6 +1,7 @@
 *
-!script/*
-!script
+!script/*.lua
+!script/*.py
+!script/*.md
 !src
 !src/*
 !*.md
