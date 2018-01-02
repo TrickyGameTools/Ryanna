@@ -34,7 +34,8 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib Licen
 -- but is not required)
 function Use(imp,noreturn)
 	-- single file
-	wimp = string.upper(imp)
+	local wimp = string.upper(imp)
+	local ret
 	if right(wimp,4)==".LUA" then
 		ret = PreProcess(imp)
 		if noreturn then return nil else return ret end
@@ -46,18 +47,21 @@ function Use(imp,noreturn)
 		return Use(imp..".rel",noreturn)
 	end
 	-- Import all the data
-	pret = {} -- pre return
-	for ename,entry in spairs(jcr.Entries) do
-		if prefixed(ename,wimp+"/") and suffixed(ename,".LUA") then
+	local pret = {} -- pre return
+	local name
+	print (serialize('jcr',jcr))
+	for ename,entry in spairs(jcr.entries) do
+		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
 			name = left(entry.entry,#entry.entry-4)
 			pret[name] = PreProcess(entry.entry)
 		end
 	end
 	-- Count it all
-	cnt = 0
+	local cnt = 0
+	local lk
 	for k,v in pairs(pret) do cnt = cnt + 1   lk = k end
-	assert(cnt>0,"Ryanna Expanded Library is empty: "+imp)
+	assert(cnt>0,"Ryanna Expanded Library is empty: "..imp)
 	if noreturn then return end
 	if cnt==1 then
 		return pret[lk]

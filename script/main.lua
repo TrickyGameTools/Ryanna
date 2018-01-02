@@ -180,10 +180,10 @@ return substr(st,-ln,-1)
 end 
 
 function mid(s,o,l)
-local ln=l or 1
-local of=o or 1
-local st=s or ""
-return substr(st,of,(of+ln)-1)
+  local ln=l or 1
+  local of=o or 1
+  local st=s or ""
+  return substr(st,of,(of+ln)-1)
 end 
 
 
@@ -204,11 +204,11 @@ return ret
 end
 
 function prefixed(str,prefix)
-	return left(str,#prefix)==prefixed
+	return left(str,#prefix)==prefix
 end
 
-function suffixed(str,prefix)
-	return right(str,#prefix)==prefixed
+function suffixed(str,suffix)
+	return right(str,#suffix)==suffix
 end
 
 

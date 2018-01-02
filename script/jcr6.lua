@@ -58,7 +58,7 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 	local entries = {}
 	for i,f in ipairs(list) do
 		if (not skipwork) or (left(lower(f),5)~="swap/" and left(lower(f),9)~="savegame/") then
-			entries[#entries+1] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
+			entries[string.upper(f)] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
 		end
 	end
 	local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
@@ -122,13 +122,13 @@ function JCR_Exists(j,nameentry)
 			mj = JCR_Dir(j)
 		end
 	end
-	e = string.upper(entry)
-	edata = mj.entries[e]
+	local e = string.upper(entry)
+	local edata = mj.entries[e]
 	return edata~=nil
 end
 
 function JCR_HasDir(j,namedir)
-	local mj
+	local mj,dir
 	if not namedir then
 		dir= string.upper(j)
 		mj = jcr
@@ -141,8 +141,9 @@ function JCR_HasDir(j,namedir)
 			mj = JCR_Dir(j)
 		end
 	end
-	if not suffixed(dir) then dir = dir .. "/" end
-	for ent,_ in pairs(mj) do
+	if not suffixed(dir,"/") then dir = dir .. "/" end
+	for ent,_ in pairs(mj.entries) do
+	  --print(ent,"\t",dir)
 		if prefixed(ent,dir) then return true end
 	end
 	return false

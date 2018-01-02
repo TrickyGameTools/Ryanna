@@ -123,16 +123,21 @@ local prid = {
 }
 
 function PreProcess(file)
+  local debug = true
 	local d = JCR_Lines(file)
 	local haveif
 	local muteif
 	local ret = ""
 	local localdefs = {}
+	print("Compiling: "..file)
 	for lnum,line in ipairs(d) do
-		sline = mysplit(trim(line))
+	  if debug then print ("Processing line: "..lnum.."> "..line) print (prefixed(trim(line),"-- $")) end
+		local sline = mysplit(trim(line))
 		if prefixed(trim(line),"-- $") then
-			sline[2]=strings.upper(sline[2])
-			cmd = strings.upper(sline[2])
+		  if debug then print("compiler directivefound: "..line) end
+			sline[2]=string.upper(sline[2])
+			local cmd = string.upper(sline[2])
+			local cmd = right(cmd,#cmd-1)
 			assert(prid[cmd],"UNKNOWN PRE-PROCESSOR DIRECTIVE in line "..lnum.." ("..cmd..")")
 			haveif,muteif,rl = prid[cmd](sline,haveif,muteif,lnum,localdefs)
 			ret = ret .. (rl or line) .. "\n"
@@ -142,7 +147,9 @@ function PreProcess(file)
 			ret = ret .. line .."\n"
 		end
 	end
-	return ret
+	if debug then print(ret) end
+	local f = load(ret,file)
+	return f()
 end
 `
 
@@ -206,7 +213,7 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 	local entries = {}
 	for i,f in ipairs(list) do
 		if (not skipwork) or (left(lower(f),5)~="swap/" and left(lower(f),9)~="savegame/") then
-			entries[#entries+1] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
+			entries[string.upper(f)] = { entry = f, LOVE = f, mainfile = love.filesystem.getSource() }
 		end
 	end
 	local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
@@ -270,13 +277,13 @@ function JCR_Exists(j,nameentry)
 			mj = JCR_Dir(j)
 		end
 	end
-	e = string.upper(entry)
-	edata = mj.entries[e]
+	local e = string.upper(entry)
+	local edata = mj.entries[e]
 	return edata~=nil
 end
 
 function JCR_HasDir(j,namedir)
-	local mj
+	local mj,dir
 	if not namedir then
 		dir= string.upper(j)
 		mj = jcr
@@ -289,8 +296,9 @@ function JCR_HasDir(j,namedir)
 			mj = JCR_Dir(j)
 		end
 	end
-	if not suffixed(dir) then dir = dir .. "/" end
-	for ent,_ in pairs(mj) do
+	if not suffixed(dir,"/") then dir = dir .. "/" end
+	for ent,_ in pairs(mj.entries) do
+	  --print(ent,"\t",dir)
 		if prefixed(ent,dir) then return true end
 	end
 	return false
@@ -361,7 +369,8 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib Licen
 -- but is not required)
 function Use(imp,noreturn)
 	-- single file
-	wimp = string.upper(imp)
+	local wimp = string.upper(imp)
+	local ret
 	if right(wimp,4)==".LUA" then
 		ret = PreProcess(imp)
 		if noreturn then return nil else return ret end
@@ -373,18 +382,21 @@ function Use(imp,noreturn)
 		return Use(imp..".rel",noreturn)
 	end
 	-- Import all the data
-	pret = {} -- pre return
-	for ename,entry in spairs(jcr.Entries) do
-		if prefixed(ename,wimp+"/") and suffixed(ename,".LUA") then
+	local pret = {} -- pre return
+	local name
+	print (serialize('jcr',jcr))
+	for ename,entry in spairs(jcr.entries) do
+		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
 			name = left(entry.entry,#entry.entry-4)
 			pret[name] = PreProcess(entry.entry)
 		end
 	end
 	-- Count it all
-	cnt = 0
+	local cnt = 0
+	local lk
 	for k,v in pairs(pret) do cnt = cnt + 1   lk = k end
-	assert(cnt>0,"Ryanna Expanded Library is empty: "+imp)
+	assert(cnt>0,"Ryanna Expanded Library is empty: "..imp)
 	if noreturn then return end
 	if cnt==1 then
 		return pret[lk]
@@ -607,10 +619,10 @@ return substr(st,-ln,-1)
 end 
 
 function mid(s,o,l)
-local ln=l or 1
-local of=o or 1
-local st=s or ""
-return substr(st,of,(of+ln)-1)
+  local ln=l or 1
+  local of=o or 1
+  local st=s or ""
+  return substr(st,of,(of+ln)-1)
 end 
 
 
@@ -631,11 +643,11 @@ return ret
 end
 
 function prefixed(str,prefix)
-	return left(str,#prefix)==prefixed
+	return left(str,#prefix)==prefix
 end
 
-function suffixed(str,prefix)
-	return right(str,#prefix)==prefixed
+function suffixed(str,suffix)
+	return right(str,#suffix)==suffix
 end
 
 

@@ -116,16 +116,21 @@ local prid = {
 }
 
 function PreProcess(file)
+  local debug = true
 	local d = JCR_Lines(file)
 	local haveif
 	local muteif
 	local ret = ""
 	local localdefs = {}
+	print("Compiling: "..file)
 	for lnum,line in ipairs(d) do
-		sline = mysplit(trim(line))
+	  if debug then print ("Processing line: "..lnum.."> "..line) print (prefixed(trim(line),"-- $")) end
+		local sline = mysplit(trim(line))
 		if prefixed(trim(line),"-- $") then
-			sline[2]=strings.upper(sline[2])
-			cmd = strings.upper(sline[2])
+		  if debug then print("compiler directivefound: "..line) end
+			sline[2]=string.upper(sline[2])
+			local cmd = string.upper(sline[2])
+			local cmd = right(cmd,#cmd-1)
 			assert(prid[cmd],"UNKNOWN PRE-PROCESSOR DIRECTIVE in line "..lnum.." ("..cmd..")")
 			haveif,muteif,rl = prid[cmd](sline,haveif,muteif,lnum,localdefs)
 			ret = ret .. (rl or line) .. "\n"
@@ -135,5 +140,7 @@ function PreProcess(file)
 			ret = ret .. line .."\n"
 		end
 	end
-	return ret
+	if debug then print(ret) end
+	local f = load(ret,file)
+	return f()
 end
