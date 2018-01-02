@@ -49,7 +49,7 @@ function Use(imp,noreturn)
 	-- Import all the data
 	local pret = {} -- pre return
 	local name
-	print (serialize('jcr',jcr))
+	--print (serialize('jcr',jcr))
 	for ename,entry in spairs(jcr.entries) do
 		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
