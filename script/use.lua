@@ -1,8 +1,8 @@
 --[[
   use.lua
   Ryanna - Script
-  version: 17.12.30
-  Copyright (C) 2017 Jeroen P. Broks
+  version: 18.01.02
+  Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
   arising from the use of this software.
@@ -20,7 +20,7 @@
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","17.12.30")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.02")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
