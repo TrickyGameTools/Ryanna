@@ -28,6 +28,7 @@ if plat == "WINDOWS" then defs["$WIN"] = true defs["$WINDOWS"] = true defs["$WIN
 if plat == "LINUX" then defs["$LINUX"] = true defs["$INSTABIEL"] = true end
 if plat == "ANDROID" then defs["$ANDROID"] = true defs["$MOBILE"] = true end
 if plat == "IOS" then defs["$IOS"] = true defs["$MOBILE"]=true end
+if RYANNA_BUILDTYPE=='test' then defs["$TEST"]=true end
 
 local prid = {
 	["IF"] = function(sl,h,m,n,ld)

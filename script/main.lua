@@ -28,6 +28,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib Lice
 RYANNA_MAIN_SCRIPT = "$RyannaMainScript$"
 RYANNA_LOAD_JCR    = "$RyannaLoadJCR$"     -- quotes will be removed. I've set it up as a string to deceive parse error checking IDEs, as they would otherwise go crazy.
 RYANNA_TITLE       = "$RyannaTitle$"; love.window.setTitle(RYANNA_TITLE)
+RYANNA_BUILDTYPE   = "$RyannaBuildType"    -- Will contain 'normal' in normal builds and 'test' in test builds. Handy for extra debugging features in Ryanna.
 
 platform = love.system.getOS( )
 

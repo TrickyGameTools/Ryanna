@@ -97,7 +97,8 @@ func gather(test bool){
 		bstr:=str
 		bstr = strings.Replace(bstr,"$RyannaMainScript$",MainScript,-10)
 		bstr = strings.Replace(bstr,"$RyannaTitle$",prjgini.C("Title"),-10)
-		if prjgini.C("Package")=="JCR" { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","true",-11) } else { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","false",-12) }
+		if test { bstr = strings.Replace(bstr,"$RyannaBuildType","test",-20) } else {bstr = strings.Replace(bstr,"$RyannaBuildType","normal",-20)}
+		if test || prjgini.C("Package")=="JCR" { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","true",-11) } else { bstr=strings.Replace(bstr,"\"$RyannaLoadJCR$\"","false",-12) }
 		bstr = strings.Replace(bstr,"$RyannaVersion$",mkl.Newest(),-14)
 		err := qff.WriteStringToFile(dirry.Dirry(swapbase+f+".lua"),bstr)
 		if err!=nil { crash(err.Error()) }

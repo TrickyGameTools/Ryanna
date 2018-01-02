@@ -35,6 +35,7 @@ if plat == "WINDOWS" then defs["$WIN"] = true defs["$WINDOWS"] = true defs["$WIN
 if plat == "LINUX" then defs["$LINUX"] = true defs["$INSTABIEL"] = true end
 if plat == "ANDROID" then defs["$ANDROID"] = true defs["$MOBILE"] = true end
 if plat == "IOS" then defs["$IOS"] = true defs["$MOBILE"]=true end
+if RYANNA_BUILDTYPE=='test' then defs["$TEST"]=true end
 
 local prid = {
 	["IF"] = function(sl,h,m,n,ld)
@@ -477,6 +478,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib Lice
 RYANNA_MAIN_SCRIPT = "$RyannaMainScript$"
 RYANNA_LOAD_JCR    = "$RyannaLoadJCR$"     -- quotes will be removed. I've set it up as a string to deceive parse error checking IDEs, as they would otherwise go crazy.
 RYANNA_TITLE       = "$RyannaTitle$"; love.window.setTitle(RYANNA_TITLE)
+RYANNA_BUILDTYPE   = "$RyannaBuildType"    -- Will contain 'normal' in normal builds and 'test' in test builds. Handy for extra debugging features in Ryanna.
 
 platform = love.system.getOS( )
 
