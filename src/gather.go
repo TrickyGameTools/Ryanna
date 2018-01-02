@@ -4,7 +4,7 @@
 	
 	
 	
-	(c) Jeroen P. Broks, 2017, All rights reserved
+	(c) Jeroen P. Broks, 2017, 2018, All rights reserved
 	
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -20,13 +20,14 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.31
+Version: 18.01.02
 */
 package main
 
 
 import (
 	"os"
+	"fmt"
 	"path"
 	"strings"
 	"trickyunits/mkl"
@@ -38,9 +39,10 @@ import (
 
 )
 
+var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","17.12.31")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.02")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -113,12 +115,18 @@ func gather(test bool){
 					   //01234567
 					pr:="-- $USE LIBS/"
 					if qstr.Left(l,len(pr))==pr {
+						if libdebug { aprintln("magenta","Requested: "+l) }
 						found:=false
 						nl:=qstr.MyTrim(l[7:])
 						for _,lb:=range libs {
 							found=found || lb==nl
 						}
-						if !found { libs = append(libs,nl) }
+						if !found { 
+							libs = append(libs,nl) 
+							if libdebug {
+								aprintln("magenta","Requested new library: "+l)
+							}
+						}
 					}
 				}
 			}
@@ -151,51 +159,58 @@ func gather(test bool){
 	}
 	// Include libraries if there are any
 	for i:=0;i<len(libs);i++ {
+		ok:=false
 		lib:=libs[i]
 		clb:=strings.ToUpper(lib)
 		if !qstr.Suffixed(clb,".REL") { clb += ".REL" }
-		for _,pl:=range libtrees {
+		for _,pl:=range libtrees { 
 			cpl:=strings.ToUpper(pl)
-			aprint("yellow","Importing library: ")
-			aprintln("cyan",cpl)
-			if qstr.Suffixed(cpl,clb){
-				// are there any requests for new libs?
-				jtree:=tree.GetTree(pl,false)
-				for _,f:=range jtree { // looking for external lib references. The folder LIBS/ is reserved for this!
-					if path.Ext(f)==".lua" {
-						lines:=qff.GetLines(pl+"/"+f)
-						for _,line:=range lines {
-							l:=strings.ToUpper(qstr.MyTrim(line))
-							   //01234567
-							pr:="-- $USE LIBS/"
-							if qstr.Left(l,len(pr))==pr {
-								found:=false
-								nl:=qstr.MyTrim(l[7:])
-								for _,lb:=range libs {
-									found=found || lb==nl
+			if libdebug { 
+				fmt.Print(i,">",libs[i],">",clb,"\n\t",pl,">",cpl,"\n\t\t",path.Base(cpl)," >> ",path.Base(cpl)==clb,"\n")
+			}
+			if "LIBS/"+path.Base(cpl)==clb{
+				ok=true
+				aprint("yellow","Importing library: ")
+				aprintln("cyan",pl)
+				if qstr.Suffixed(cpl,clb){
+					// are there any requests for new libs?
+					jtree:=tree.GetTree(pl,false)
+					for _,f:=range jtree { // looking for external lib references. The folder LIBS/ is reserved for this!
+						if path.Ext(f)==".lua" {
+							lines:=qff.GetLines(pl+"/"+f)
+							for _,line:=range lines {
+								l:=strings.ToUpper(qstr.MyTrim(line))
+								   //01234567
+								pr:="-- $USE LIBS/"
+								if qstr.Left(l,len(pr))==pr {
+									found:=false
+									nl:=qstr.MyTrim(l[7:])
+									for _,lb:=range libs {
+										found=found || lb==nl
+									}
+									if !found { libs = append(libs,nl) }
 								}
-								if !found { libs = append(libs,nl) }
 							}
 						}
 					}
-				}
-				if test {
-					// Do nothing. Everything that has to be done, has been done.
-				} else if prjgini.C("Package")=="JCR" {
-					for _,jtf:=range jtree{
-						jif += "FILE:"+pl+"/"+jtf+"\n"
-						jif += "TARGET:Libs/"+path.Base(pl)+"/"+jtf+"\n"
-						jif += "AUTHOR:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].AUTHOR")+"\n"
-						jif += "NOTES:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].LICENSE")+"\n"
-						jif += "STORAGE:BRUTE\n"
+					if test {
+						// Do nothing. Everything that has to be done, has been done.
+					} else if prjgini.C("Package")=="JCR" {
+						for _,jtf:=range jtree{
+							jif += "FILE:"+pl+"/"+jtf+"\n"
+							jif += "TARGET:Libs/"+path.Base(pl)+"/"+jtf+"\n"
+							jif += "AUTHOR:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].AUTHOR")+"\n"
+							jif += "NOTES:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].LICENSE")+"\n"
+							jif += "STORAGE:BRUTE\n"
+						}
+					} else {
+						ziplib(path.Dir(pl)+"..",path.Base(pl),zipf)
 					}
-				} else {
-					ziplib(path.Dir(pl)+"..",path.Base(pl),zipf)
 				}
 			}
 		}
+		if !ok { crash("Library '"+libs[i]+"' could not be located") }
 	}
-	
 	// jcr build
 	if calljcr {
 		aprintln("cyan","Creating JCR6 work file")
