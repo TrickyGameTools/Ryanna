@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.02
+Version: 18.01.03
 */
 package main
 
@@ -42,7 +42,7 @@ import (
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.02")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.03")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -139,8 +139,8 @@ func gather(test bool){
 			for _,jtf:=range jtree{
 				jif += "FILE:"+d+"/"+jtf+"\n"
 				jif += "TARGET:"+jtf+"\n"
-				jif += "AUTHOR:"+prjgini.C("SOURCE['"+d+"/"+jtf+"'].AUTHOR")+"\n"
-				jif += "NOTES:"+prjgini.C("SOURCE['"+d+"/"+jtf+"'].LICENSE")+"\n"
+				jif += "AUTHOR:"+prjgini.C("SOURCE['"+d+"'].AUTHOR")+"\n"
+				jif += "NOTES:"+prjgini.C("SOURCE['"+d+"'].LICENSE")+"\n"
 				jif += "STORAGE:BRUTE\n"
 			}
 		} else {
