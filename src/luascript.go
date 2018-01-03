@@ -442,7 +442,7 @@ function Use(imp,noreturn)
 			  local key = ks[#ks]
 				if v.me then print("WARNING! 'me' field set in module part.") else v.me = ret end
 				ret[key] = v
-				print('Sub '..key..' added')
+				--print('Sub '..key..' added')
 			else 
 				for k2,v2 in pairs(v) do
 					if ret[k2] then print("WARNING! Duplicate identifier '"..k2.."' found!") end
@@ -453,7 +453,7 @@ function Use(imp,noreturn)
 			ret[k] = v
 		end
 	end
-	for k,_ in spairs(ret) do print("= "..k) end -- debug line
+	--for k,_ in spairs(ret) do print("= "..k) end -- debug line
 	return ret
 end
 
