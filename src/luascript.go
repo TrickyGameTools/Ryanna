@@ -367,7 +367,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 	script["use"] = `--[[
   use.lua
   Ryanna - Script
-  version: 18.01.02
+  version: 18.01.03
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -386,7 +386,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.02")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.03")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -438,11 +438,14 @@ function Use(imp,noreturn)
 	for k,v in pairs(pret) do
 		if type(v)=="table" then
 			if v.nomerge then
+			  local ks  = mysplit(k,"/")
+			  local key = ks[#ks]
 				if v.me then print("WARNING! 'me' field set in module part.") else v.me = ret end
-				ret[k] = v
+				ret[key] = v
+				print('Sub '..key..' added')
 			else 
 				for k2,v2 in pairs(v) do
-					if ret[k2] then print("WARNING! Duplicate identifier '"+k2+"' found!") end
+					if ret[k2] then print("WARNING! Duplicate identifier '"..k2.."' found!") end
 					ret[k2] = v2
 				end
 			end
@@ -450,6 +453,7 @@ function Use(imp,noreturn)
 			ret[k] = v
 		end
 	end
+	for k,_ in spairs(ret) do print("= "..k) end -- debug line
 	return ret
 end
 
@@ -786,7 +790,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.02")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.03")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
