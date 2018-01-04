@@ -8,7 +8,7 @@ func init(){
 	script["preprocess"] = `--[[
   preprocess.lua
   
-  version: 18.01.02
+  version: 18.01.04
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -46,14 +46,14 @@ local prid = {
 		for k,v in pairs(defs) do pline = pline .. "chk['"..k.."'] = true\n" end -- This makes sure we got all locals in our little function.
 		-- localdefs defs
 		for k,v in pairs(ld) do pline = pline .. "chk['"..k.."'] = true\n" end -- This makes sure we got all locals in our little function.
-		pline = "\n\nreturn "
+		pline = pline .."\n\nreturn "
 		for i=3,#sl do
-			w=string.upper(sl[i])
+			local w=string.upper(sl[i])
 			if w=="OR" or w=="AND" then pline = pline .. string.lower(w) .. " "
 			elseif prefixed(w,1)=="!" then pline = pline .. " (not chk['"+w+"']) "
-			else   pline = pline .. "(chk['"+w+"') " end
+			else   pline = pline .. "(chk['"..w.."']) " end
 		end
-		ok,chkf = pcall(load(pline,"$IF"))
+		local ok,chkf = pcall(load(pline,"$IF"))
 		if not ok then
 			print("$IF went wrong in line: "..n)
 			print("-- GENERATED CODE --")
@@ -62,7 +62,7 @@ local prid = {
 			print("error: "..chkf)
 			error("Invalid $IF call in line: "..n)
 		end
-		local mute = not chkf()
+		local mute = not chkf
 		return true,mute
 	end,
 	
@@ -476,7 +476,7 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 18.01.02
+  version: 18.01.04
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -495,7 +495,7 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.02")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.04")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -680,11 +680,11 @@ return ret
 end
 
 function prefixed(str,prefix)
-	return left(str,#prefix)==prefix
+	return left(str,#(prefix..""))==prefix
 end
 
 function suffixed(str,suffix)
-	return right(str,#suffix)==suffix
+	return right(str,#(suffix..""))==suffix
 end
 
 
@@ -795,7 +795,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.02")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.04")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 
