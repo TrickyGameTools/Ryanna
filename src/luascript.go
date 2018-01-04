@@ -157,7 +157,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.02
+  version: 18.01.04
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -202,6 +202,7 @@ function JCR_Dir(jfile)
 	for i=2,#sl do s = s .. sl[i] .. "\n" end
 	local f=load(s,"JCR_DIR("..jfile..")")
 	local ret={}
+	assert(f,'Error parsing directory data')
 	ret.entries = f()
 	ret.JCR_B = JCR_B
 	ret.from = jfile
@@ -359,7 +360,7 @@ jcr = BaseDir()
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.02")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.04")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -786,7 +787,7 @@ assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been a
 Use(RYANNA_MAIN_SCRIPT)
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.02")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.04")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
