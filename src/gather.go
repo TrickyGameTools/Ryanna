@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.04
+Version: 18.01.05
 */
 package main
 
@@ -42,7 +42,7 @@ import (
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.04")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.05")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -141,7 +141,11 @@ func gather(test bool){
 				jif += "TARGET:"+jtf+"\n"
 				jif += "AUTHOR:"+prjgini.C("SOURCE['"+d+"'].AUTHOR")+"\n"
 				jif += "NOTES:"+prjgini.C("SOURCE['"+d+"'].LICENSE")+"\n"
-				jif += "STORAGE:BRUTE\n"
+				if strings.ToLower(path.Ext(jtf))==".mp3" {
+					jif += "STORAGE:Store\n"
+				} else {
+					jif += "STORAGE:BRUTE\n"
+				}
 			}
 		} else {
 			zip(d,zipf)
@@ -203,7 +207,11 @@ func gather(test bool){
 							jif += "TARGET:Libs/"+path.Base(pl)+"/"+jtf+"\n"
 							jif += "AUTHOR:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].AUTHOR")+"\n"
 							jif += "NOTES:"+prjgini.C("SOURCE['"+pl+"/"+jtf+"'].LICENSE")+"\n"
-							jif += "STORAGE:BRUTE\n"
+							if strings.ToLower(path.Ext(jtf))==".mp3" {
+								jif += "STORAGE:Store\n"
+							} else {
+								jif += "STORAGE:BRUTE\n"
+							}
 						}
 					} else {
 						ziplib(path.Dir(pl)+"..",path.Base(pl),zipf)
