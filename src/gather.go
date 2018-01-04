@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.03
+Version: 18.01.04
 */
 package main
 
@@ -42,7 +42,7 @@ import (
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.03")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.04")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -213,6 +213,23 @@ func gather(test bool){
 		}
 		if !ok { crash("Library '"+libs[i]+"' could not be located") }
 	}
+	// Alias
+	prjgini.CL("ALIASES",true)
+	for _,al:=range prjgini.List("ALIASES"){
+		als:=strings.Split(al," => ")
+		aprint("yellow","Alias request: ")
+		aprintln("cyan",al)
+		if len(als)!=2 {
+			nferror(" Invalid alias request: "+al)
+		} else if test {
+			nferror("Aliasing in testing not yet supported: "+al)
+		} else if prjgini.C("Package")=="JCR" {
+			jif += "ALIAS:"+qstr.MyTrim(als[0])+"\nAS:"+qstr.MyTrim(als[1])+"\n"
+		} else {
+			nferror("Aliasing in full zip export not yet supported: "+al)
+		}
+	}
+	
 	// jcr build
 	if calljcr {
 		aprintln("cyan","Creating JCR6 work file")
