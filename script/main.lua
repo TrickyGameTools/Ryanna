@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.01.02
+  version: 18.01.04
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.02")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.04")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -205,11 +205,11 @@ return ret
 end
 
 function prefixed(str,prefix)
-	return left(str,#prefix)==prefix
+	return left(str,#(prefix..""))==prefix
 end
 
 function suffixed(str,suffix)
-	return right(str,#suffix)==suffix
+	return right(str,#(suffix..""))==suffix
 end
 
 
