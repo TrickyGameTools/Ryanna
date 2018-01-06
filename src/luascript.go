@@ -157,7 +157,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.04
+  version: 18.01.06
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -330,7 +330,7 @@ function JCR_HasDir(j,namedir)
 	end
 	if not suffixed(dir,"/") then dir = dir .. "/" end
 	for ent,_ in pairs(mj.entries) do
-	  --print(ent,"\t",dir)
+	  -- print(ent,"\t",dir) -- debug line. Must be on comment if not in use!
 		if prefixed(ent,dir) then return true end
 	end
 	return false
@@ -360,7 +360,7 @@ jcr = BaseDir()
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.04")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.06")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -787,7 +787,7 @@ assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been a
 Use(RYANNA_MAIN_SCRIPT)
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.04")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.06")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
