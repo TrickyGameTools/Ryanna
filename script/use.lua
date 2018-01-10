@@ -1,7 +1,7 @@
 --[[
   use.lua
   Ryanna - Script
-  version: 18.01.03
+  version: 18.01.08
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.03")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.08")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -54,7 +54,24 @@ function Use(imp,noreturn)
 		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
 			name = left(entry.entry,#entry.entry-4)
-			pret[name] = PreProcess(entry.entry)
+			local allow=true
+			local dn = mysplit(lower(name),"__")
+			local plat = string.upper(love.system.getOS( ))
+			if #dn>1 then
+			   for i=2,#dn do
+			       if dn[i]=="ignore" then allow=false end
+			       if dn[i]=="windows" then allow=allow and plat=="WINDOWS" end
+             if dn[i]=="osx" or dn=="darwin" or dn=="macos" or dn=="mac " then allow=allow and plat=="OS X" end
+             if dn[i]=="linux" then allow = allow and plat=="LINUX" end
+             if dn[i]=="android" then allow = allow and plat=="ANDROID" end
+             if dn[i]=="ios" then allow = allow and plat=='IOS' end
+             if dn[i]=="mobile" then allow = allow and ( plat=='IOS' or plat=="ANDROID") end -- I know Windows can be mobile too, but as LOVE does not take that possibility into account, I'm sorry for Windows phone users. Blame either microsoft of the love crew for that, but not me!
+			   end
+			end
+			if allow then 
+			   pret[name] = PreProcess(entry.entry)
+			else print("Skipping: "..entry.entry) -- debug   
+			end   
 		end
 	end
 	-- Count it all

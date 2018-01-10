@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.01.04
+  version: 18.01.10
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.04")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.10")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -132,6 +132,24 @@ function tablecontains(table, element)
   return false
 end
 
+function StripDir(f)
+   local mf = mysplit(f,"/")
+   return mf[#mf]
+end
+
+-- This routine will need some more work to be more accurate, but for now it'll do.
+function StripExt(f)
+    local mf=mysplit(f,".")
+    if #mf==1 then return f end
+    local ret=mf[1]
+    for i=2,#mf-1 do ret = ret .. "."..mf[i] end
+    return ret
+end
+
+function StripAll(f)
+    return StripExt(StripDir(f))
+end
+           
 
 
 
