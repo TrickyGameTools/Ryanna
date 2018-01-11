@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.05
+Version: 18.01.11
 */
 package main
 
@@ -36,13 +36,14 @@ import (
 	"trickyunits/dirry"
 	"trickyunits/shell"
 	"trickyunits/tree"
+	"trickyunits/gini"
 
 )
 
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.05")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.11")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -178,7 +179,35 @@ func gather(test bool){
 				ok=true
 				aprint("yellow","Importing library: ")
 				aprintln("cyan",pl)
-				if qstr.Suffixed(cpl,clb){
+				if qstr.Suffixed(cpl,clb) && qff.Exists(pl+"/RyannaBuild.gini") {
+					special:=gini.ReadFromFile(pl+"/RyannaBuild.gini")
+					if special.ListExists("BUILDNOTES") {
+						for _,n:=range(special.List("BUILDNOTES")) { aprintln("yellow","\t"+n) }
+					}
+					oridir:=qff.PWD()
+					os.Chdir(pl)
+					if special.ListExists("PUREDIRS") {
+						for _,d:=range special.List("PUREDIRS"){
+							shell.Shell("zip -r -9 '"+dirry.Dirry(zipf)+"' "+d)
+						}
+					}
+					os.Chdir("../..")
+					if special.ListExists("FILES") {
+						for _,d:=range special.List("FILES"){
+							shell.Shell("zip -r -9 '"+dirry.Dirry(zipf)+"' 'Libs/"+path.Base(cpl)+"/"+d+"'")
+						}
+					}
+					os.Chdir(oridir)
+					if special.ListExists("SCRIPT") {
+						aprint("red","WARNING! ")
+						aprintln("yellow","Scripting has not yet been implemented. Once it is, the Lua scripting language will (naturally) be used")
+					}
+					if special.ListExists("USE") {
+						for _,l:=range special.List("USE"){
+							if qstr.Prefixed(strings.ToUpper(l),"LIBS/") { libs = append(libs,l) } else { libs = append(libs,"Libs/"+l) }
+						}
+					}
+				} else if qstr.Suffixed(cpl,clb){
 					// are there any requests for new libs?
 					jtree:=tree.GetTree(pl,false)
 					for _,f:=range jtree { // looking for external lib references. The folder LIBS/ is reserved for this!
