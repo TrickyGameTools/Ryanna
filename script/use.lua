@@ -1,7 +1,7 @@
 --[[
   use.lua
   Ryanna - Script
-  version: 18.01.11
+  version: 18.01.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.11")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.12")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -61,8 +61,7 @@ function Use(imp,noreturn)
 	         end   
 	     end
 	     assert(req,"Special unit has not file to call set!")
-	     Use(req)
-	     return
+	     return Use(req)
 	  end   
 		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))

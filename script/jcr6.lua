@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.11
+  version: 18.01.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -215,7 +215,7 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 		  if key=="entries" then
 		    for ekey,edata in pairs(res) do
 		      ret.entries[ekey] = edata 
-		      print("Adding "..i..": "..ekey)
+		      --print("Adding "..i..": "..ekey)
 		    end -- for ekey,edata
 		  end -- if key==entres
 		end -- for key,res  
@@ -227,6 +227,6 @@ jcr = BaseDir()
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.11")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.12")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]

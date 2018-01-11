@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.01.11
+  version: 18.01.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.11")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.12")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -85,7 +85,8 @@ end
 function spairs(t, order)
     -- collect the keys
     local keys = {}
-    for k in pairs(t) do keys[#keys+1] = k end
+    local t2 = {}
+    for k,v in pairs(t) do keys[#keys+1] = k  t2[k]=v end
 
     -- if order function given, sort by it by passing the table and keys a, b,
     -- otherwise just sort the keys 
@@ -100,7 +101,7 @@ function spairs(t, order)
     return function()
         i = i + 1
         if keys[i] then
-            return keys[i], t[keys[i]]
+            return keys[i], t2[keys[i]]
         end
     end
 end

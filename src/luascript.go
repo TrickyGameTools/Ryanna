@@ -160,7 +160,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.11
+  version: 18.01.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -374,7 +374,7 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 		  if key=="entries" then
 		    for ekey,edata in pairs(res) do
 		      ret.entries[ekey] = edata 
-		      print("Adding "..i..": "..ekey)
+		      --print("Adding "..i..": "..ekey)
 		    end -- for ekey,edata
 		  end -- if key==entres
 		end -- for key,res  
@@ -386,7 +386,7 @@ jcr = BaseDir()
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.11")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.12")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -394,7 +394,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 	script["use"] = `--[[
   use.lua
   Ryanna - Script
-  version: 18.01.11
+  version: 18.01.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -413,7 +413,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.11")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.12")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -454,8 +454,7 @@ function Use(imp,noreturn)
 	         end   
 	     end
 	     assert(req,"Special unit has not file to call set!")
-	     Use(req)
-	     return
+	     return Use(req)
 	  end   
 		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
@@ -532,7 +531,7 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 18.01.11
+  version: 18.01.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -551,7 +550,7 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.11")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.12")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -616,7 +615,8 @@ end
 function spairs(t, order)
     -- collect the keys
     local keys = {}
-    for k in pairs(t) do keys[#keys+1] = k end
+    local t2 = {}
+    for k,v in pairs(t) do keys[#keys+1] = k  t2[k]=v end
 
     -- if order function given, sort by it by passing the table and keys a, b,
     -- otherwise just sort the keys 
@@ -631,7 +631,7 @@ function spairs(t, order)
     return function()
         i = i + 1
         if keys[i] then
-            return keys[i], t[keys[i]]
+            return keys[i], t2[keys[i]]
         end
     end
 end
@@ -863,15 +863,15 @@ assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been a
 Use(RYANNA_MAIN_SCRIPT)
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.11")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.12")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.11")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.12")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.11")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.12")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 
