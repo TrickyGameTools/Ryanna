@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.06
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -66,6 +66,23 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 	return ret
 end
 
+function LOVE_FullDir(adir) -- recursive dir
+  local dir = adir or ""
+  local list = love.filesystem.getDirectoryItems( dir or "" )
+  local entries = {}
+  local slash = "/"; if dir=="" then slash="" end
+  for i,f in ipairs(list) do
+      entries[string.upper(dir..slash..f)] = { entry = dir..slash..f, LOVE = dir..slash..f, mainfile = love.filesystem.getSource() }
+      if love.filesystem.isDir(dir..slash..f) then 
+         local te = LOVE_FullDir(dir..slash..f)
+         for k,d in pairs(te.entries) do entries[k]=d end
+      end
+  end
+  local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
+  return ret
+
+end 
+
 function JCR_B(j,nameentry,lines)
 	local mj,entry
 	if not nameentry then
@@ -86,7 +103,10 @@ function JCR_B(j,nameentry,lines)
 	assert(edata,"Entry "..entry.." not found")
 	if not edata then return end -- Make sure nothing bad happens in case of a pcall
 	if edata.LOVE then
-		return love.filesystem.read(edata.LOVE)
+		local rets = love.filesystem.read(edata.LOVE)
+    if not lines then return rets end
+	  local rett = mysplit(rets,"\n")
+	  return rett
 	end
 	local bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
 	if lines then
@@ -188,22 +208,25 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	ret.from = love.filesystem.getSource()
 	ret.kind = "MIXED"	
 	local k = {}
-	k[1] = LOVE_Dir()
+	k[1] = LOVE_FullDir()
 	if RYANNA_LOAD_JCR then k[2] = JCR_Dir(ret.from) end
 	for i,d in ipairs(k) do
 		for key,res in pairs(d) do 
 		  if key=="entries" then
 		    for ekey,edata in pairs(res) do
-		      ret.entries[ekey] = edata end
-		    end
-		  end
-	end
+		      ret.entries[ekey] = edata 
+		      print("Adding "..i..": "..ekey)
+		    end -- for ekey,edata
+		  end -- if key==entres
+		end -- for key,res  
+	end -- for i,d
 	return ret
 end
 jcr = BaseDir()
+-- for k,e in pairs(ret.entries) do print(k) end -- debug
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.06")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.11")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]

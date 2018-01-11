@@ -8,7 +8,7 @@ func init(){
 	script["preprocess"] = `--[[
   preprocess.lua
   
-  version: 18.01.04
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -131,6 +131,9 @@ function PreProcess(file)
 	local ret = ""
 	local localdefs = {}
 	print("Compiling: "..file)
+	if type(d)=='string' then
+	   --print(d)
+  end	   
 	for lnum,line in ipairs(d) do
 	  if debug then print ("Processing line: "..lnum.."> "..line) print (prefixed(trim(line),"-- $")) end
 		local sline = mysplit(trim(line))
@@ -157,7 +160,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.06
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -222,6 +225,23 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 	return ret
 end
 
+function LOVE_FullDir(adir) -- recursive dir
+  local dir = adir or ""
+  local list = love.filesystem.getDirectoryItems( dir or "" )
+  local entries = {}
+  local slash = "/"; if dir=="" then slash="" end
+  for i,f in ipairs(list) do
+      entries[string.upper(dir..slash..f)] = { entry = dir..slash..f, LOVE = dir..slash..f, mainfile = love.filesystem.getSource() }
+      if love.filesystem.isDir(dir..slash..f) then 
+         local te = LOVE_FullDir(dir..slash..f)
+         for k,d in pairs(te.entries) do entries[k]=d end
+      end
+  end
+  local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
+  return ret
+
+end 
+
 function JCR_B(j,nameentry,lines)
 	local mj,entry
 	if not nameentry then
@@ -242,7 +262,10 @@ function JCR_B(j,nameentry,lines)
 	assert(edata,"Entry "..entry.." not found")
 	if not edata then return end -- Make sure nothing bad happens in case of a pcall
 	if edata.LOVE then
-		return love.filesystem.read(edata.LOVE)
+		local rets = love.filesystem.read(edata.LOVE)
+    if not lines then return rets end
+	  local rett = mysplit(rets,"\n")
+	  return rett
 	end
 	local bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
 	if lines then
@@ -344,23 +367,26 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	ret.from = love.filesystem.getSource()
 	ret.kind = "MIXED"	
 	local k = {}
-	k[1] = LOVE_Dir()
+	k[1] = LOVE_FullDir()
 	if RYANNA_LOAD_JCR then k[2] = JCR_Dir(ret.from) end
 	for i,d in ipairs(k) do
 		for key,res in pairs(d) do 
 		  if key=="entries" then
 		    for ekey,edata in pairs(res) do
-		      ret.entries[ekey] = edata end
-		    end
-		  end
-	end
+		      ret.entries[ekey] = edata 
+		      print("Adding "..i..": "..ekey)
+		    end -- for ekey,edata
+		  end -- if key==entres
+		end -- for key,res  
+	end -- for i,d
 	return ret
 end
 jcr = BaseDir()
+-- for k,e in pairs(ret.entries) do print(k) end -- debug
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.06")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.11")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -368,7 +394,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 	script["use"] = `--[[
   use.lua
   Ryanna - Script
-  version: 18.01.08
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -387,7 +413,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.08")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.11")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -418,6 +444,19 @@ function Use(imp,noreturn)
 	local name
 	--print (serialize('jcr',jcr))
 	for ename,entry in spairs(jcr.entries) do
+	  if JCR_Exists(wimp.."/RyannaBuild.gini") then
+	     local l=JCR_Lines(wimp.."/RyannaBuild.gini")
+	     local req=nil
+	     local rqs="require="
+	     for i,ln in ipairs(l) do
+	         if prefixed(ln:lower(),rqs) then
+	            req=wimp.."/"..right(ln,#ln-#rqs)
+	         end   
+	     end
+	     assert(req,"Special unit has not file to call set!")
+	     Use(req)
+	     return
+	  end   
 		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
 			name = left(entry.entry,#entry.entry-4)
@@ -493,7 +532,7 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 18.01.10
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -512,7 +551,7 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.10")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.11")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -531,6 +570,8 @@ Ryanna = {
 	
 }
 
+
+love.filesystem.isDir = love.filesystem.isDirectory
 
 -- include use.Lua and jcr6.lua which now have not made their official entrace, so I gotta call them manually
 function load_primary_dependencies()
@@ -822,15 +863,15 @@ assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been a
 Use(RYANNA_MAIN_SCRIPT)
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.06")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.11")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.08")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.01.11")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.10")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.11")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 

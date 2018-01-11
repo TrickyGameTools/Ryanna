@@ -1,7 +1,7 @@
 --[[
   preprocess.lua
   
-  version: 18.01.04
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -124,6 +124,9 @@ function PreProcess(file)
 	local ret = ""
 	local localdefs = {}
 	print("Compiling: "..file)
+	if type(d)=='string' then
+	   --print(d)
+  end	   
 	for lnum,line in ipairs(d) do
 	  if debug then print ("Processing line: "..lnum.."> "..line) print (prefixed(trim(line),"-- $")) end
 		local sline = mysplit(trim(line))

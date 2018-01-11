@@ -1,7 +1,7 @@
 --[[
   use.lua
   Ryanna - Script
-  version: 18.01.08
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.08")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.11")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -51,6 +51,19 @@ function Use(imp,noreturn)
 	local name
 	--print (serialize('jcr',jcr))
 	for ename,entry in spairs(jcr.entries) do
+	  if JCR_Exists(wimp.."/RyannaBuild.gini") then
+	     local l=JCR_Lines(wimp.."/RyannaBuild.gini")
+	     local req=nil
+	     local rqs="require="
+	     for i,ln in ipairs(l) do
+	         if prefixed(ln:lower(),rqs) then
+	            req=wimp.."/"..right(ln,#ln-#rqs)
+	         end   
+	     end
+	     assert(req,"Special unit has not file to call set!")
+	     Use(req)
+	     return
+	  end   
 		if prefixed(ename,wimp.."/") and suffixed(ename,".LUA") then
 			name = right(entry.entry,#entry.entry-(#imp+1))
 			name = left(entry.entry,#entry.entry-4)

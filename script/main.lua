@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.01.10
+  version: 18.01.11
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.10")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.11")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -39,6 +39,8 @@ Ryanna = {
 	
 }
 
+
+love.filesystem.isDir = love.filesystem.isDirectory
 
 -- include use.Lua and jcr6.lua which now have not made their official entrace, so I gotta call them manually
 function load_primary_dependencies()
