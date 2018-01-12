@@ -328,6 +328,10 @@ return
 end  
 
 
+jcr = BaseDir()
+
 -- All done, let's now load the main script and start it all up.
 assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been assigned as main script!")
 Use(RYANNA_MAIN_SCRIPT)
+
+

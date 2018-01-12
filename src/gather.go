@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.11
+Version: 18.01.12
 */
 package main
 
@@ -43,7 +43,7 @@ import (
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.11")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.12")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -252,6 +252,7 @@ func gather(test bool){
 	}
 	// Alias
 	prjgini.CL("ALIASES",true)
+	aliasfile:=""
 	for _,al:=range prjgini.List("ALIASES"){
 		als:=strings.Split(al," => ")
 		aprint("yellow","Alias request: ")
@@ -259,12 +260,25 @@ func gather(test bool){
 		if len(als)!=2 {
 			nferror(" Invalid alias request: "+al)
 		} else if test {
-			nferror("Aliasing in testing not yet supported: "+al)
+			//nferror("Aliasing in testing not yet supported: "+al)
+			if aliasfile!="" {aliasfile+="\n"}
+			aliasfile+=al
 		} else if prjgini.C("Package")=="JCR" {
 			jif += "ALIAS:"+qstr.MyTrim(als[0])+"\nAS:"+qstr.MyTrim(als[1])+"\n"
 		} else {
-			nferror("Aliasing in full zip export not yet supported: "+al)
+			//nferror("Aliasing in full zip export not yet supported: "+al)
+			if aliasfile!="" {aliasfile+="\n"}
+			aliasfile+=al
 		}
+	}
+	if aliasfile!="" {
+		err := qff.WriteStringToFile(dirry.Dirry(swapbase+"alias.data"),aliasfile)
+		if err!=nil { crash(err.Error()) }
+		p:=qff.PWD()
+		err=os.Chdir(dirry.Dirry(swapbase))
+		if err!=nil { crash(err.Error()) }
+		shell.Shell("zip -9 '"+dirry.Dirry(zipf)+"' alias.data")
+		os.Chdir(p)
 	}
 	
 	// jcr build

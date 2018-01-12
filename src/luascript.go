@@ -258,8 +258,15 @@ function JCR_B(j,nameentry,lines)
 	end
 	local e = string.upper(entry)
 	local edata = mj.entries[e]
+  assert(edata,"Entry "..entry.." not found")
+	if edata.aliasfor then 
+	   local af=edata.aliasfor	   
+	   edata=mj.entries[edata.aliasfor:upper()] 
+	   assert(edata,"Entry '"..af.."' from alias "..entry.." not found")
+	   entry=af 
+	end
 	--print(serialize('jcr',mj)) -- debug line
-	assert(edata,"Entry "..entry.." not found")
+	
 	if not edata then return end -- Make sure nothing bad happens in case of a pcall
 	if edata.LOVE then
 		local rets = love.filesystem.read(edata.LOVE)
@@ -362,6 +369,7 @@ end
 
 
 function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna's findings.
+  local ret
 	ret = {}
 	ret.entries = {}
 	ret.from = love.filesystem.getSource()
@@ -379,9 +387,43 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 		  end -- if key==entres
 		end -- for key,res  
 	end -- for i,d
+	if love.filesystem.isFile('alias.data') then
+	   local aliasstring = love.filesystem.read('alias.data')
+	   local aliaslines = mysplit(aliasstring,"\n")
+	   for i,aline in ipairs(aliaslines) do
+	       local asplit = {""}
+	       local ai = 1
+	       local wait=0
+	       for i=1,#aline do
+	           if mid(aline,i,4)==" => " then
+	              ai=2
+	              asplit[2]=""
+	              wait=3
+	           elseif wait>0 then
+	              wait=wait-1
+	           else
+	              asplit[ai]=asplit[ai]..mid(aline,i,1)
+	           end   
+	       end
+	       local source = trim(asplit[1]):upper()
+	       local puretarget = trim(asplit[2])
+	       local target = puretarget:upper()
+	       assert(source,"Syntax error in alias file line: "..i)
+	       assert(target,"Syntax error in alias file line: "..i.."   '=>' expected")
+	       assert(ret.entries[source],"Alias error -- Original ("..source..") doesn't exit ("..aline..") line: "..i)
+	       if ret.entries[target] then print("WARNING! Alias will overwrite existing entry '"..target.."' (line: "..i..")") end
+	       ret.entries[target]={ aliasfor=source}
+	       --[[
+	       for k,v in pairs(ret.entries[source]) do ret.entries[target][k] = v end
+	       ret.entries[target].entry = puretarget
+	       ]]
+	       print("Artificially aliased "..source.." into "..target)
+	       --print(serialize("jcr",ret)) -- debug
+	   end
+	end   
 	return ret
 end
-jcr = BaseDir()
+
 -- for k,e in pairs(ret.entries) do print(k) end -- debug
 
 
@@ -858,9 +900,13 @@ return
 end  
 
 
+jcr = BaseDir()
+
 -- All done, let's now load the main script and start it all up.
 assert(RYANNA_MAIN_SCRIPT and RYANNA_MAIN_SCRIPT~="","There has no script been assigned as main script!")
 Use(RYANNA_MAIN_SCRIPT)
+
+
 `
 
 	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.12")
