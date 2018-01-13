@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.01.12
+  version: 18.01.13
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.12")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.13")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -303,6 +303,27 @@ if vname then
    end 
 if not noenter then ret = ret .."\n" end
 return ret
+end
+
+
+function cleartable(tab,recurse)
+   -- Warning about "recurse". If your table contains a 'cyclic reference' an infinite loop may be caused eventually leading to a stack overflow.
+   -- I did write some code trying to prevent this, but I cannot guarantee this.
+   -- Also if table references are used in other tables, 'recurse' will clear those tables as well!, so keep in mind that using 'recurse' should ONLY be done when you 'KNOW' what you are doing!
+   local keys = {}
+   --local temptab
+   -- gathering keys! Setting things to nil already while using pairs on the same table is bound to make Lua to malfunction
+   for key,value in pairs(tab) do
+       keys[#keys+1]=key
+   end
+   -- And now it's time for destruction!
+   for key in each(keys) do
+       local value=tab[key]
+       tab[key]=nil 
+       if type(value)=='table' and recurse then
+          cleartable(value)
+       end   
+   end    
 end
 
 
