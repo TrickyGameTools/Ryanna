@@ -116,6 +116,13 @@ local prid = {
 
 }
 
+local PPFs = {}
+
+function PreNote(f)
+   PPFs [ #PPFs+1 ]=f
+end   
+   
+
 function PreProcess(file)
   local debug = false
 	local d = JCR_Lines(file)
@@ -124,6 +131,7 @@ function PreProcess(file)
 	local ret = ""
 	local localdefs = {}
 	print("Compiling: "..file)
+	for _,P in ipairs(PPFs) do P("Compiling: ",file) end
 	if type(d)=='string' then
 	   --print(d)
   end	   
@@ -146,5 +154,6 @@ function PreProcess(file)
 	end
 	if debug then print(ret) end
 	local f = load(ret,file)
+	assert(f,"'nil' was returned after compiling file '"..file.."'. Something must have gone wrong, or the file has no proper require 'return'")
 	return f()
 end
