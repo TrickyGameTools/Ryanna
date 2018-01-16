@@ -33,9 +33,22 @@ if RYANNA_LOAD_JCR then
 end
 -- $FI
 
+function Dir2JCR(jfile)
+   if not RYANNA_LOAD_JCR then return false,"This is no JCR project" end
+   local jcall = "'"..jcrx.."' transform '"..jfile.."'"
+   local bt = io.popen(jcall)
+   -- sl = bt:readlines()
+   local sl = {}
+   for rl in bt:lines() do sl[#sl+1]=rl end
+   bt:close()
+   local s = ""
+   for i=2,#sl do s = s .. sl[i] .. "\n" end
+   return sl[1]=="OK",s
+end   
+
 function JCR_Dir(jfile)
 	local jcall = "'"..jcrx.."' dirout '"..jfile.."' lua"
-	print ("debug> ",jcall)
+	--print ("debug> ",jcall)
 	local bt = io.popen(jcall)
 	-- sl = bt:readlines()
 	local sl = {}
