@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.12
+  version: 18.01.17
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -104,7 +104,7 @@ function JCR_B(j,nameentry,lines)
 		assert ( mj , "JCR not set!" )
 	else
 		entry = string.upper(nameentry)
-		if type(mj)=='table' then
+		if type(j)=='table' then
 			mj = j
 		else 
 			mj = JCR_Dir(j)
@@ -282,6 +282,6 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.12")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.17")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
