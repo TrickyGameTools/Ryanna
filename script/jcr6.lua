@@ -156,7 +156,7 @@ end
 
 function JCR_GetDir(p1,p2,p3)
    local mj,dir,trimpath = p1,p2,p3
-   if not p3 then mj,dir,trimpath=jcr,p1,p2 end
+   if p3==nil then mj,dir,trimpath=jcr,p1,p2 end
    local cd = upper(dir)
    local ret = {}
    for k,v in pairs(mj.entries) do
