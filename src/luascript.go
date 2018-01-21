@@ -169,7 +169,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.17
+  version: 18.01.21
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -322,6 +322,36 @@ function JCR_B(j,nameentry,lines)
 	end	
 end
 
+function JCR_TRUEEXTRACT(arc,source,target)
+    local bt = io.popen("'"..jcrx.."' extract '"..source.."' '"..target.."'")
+    assert(bt,"Pipe open failed in extraction request")
+    local sl={}
+    for rsl in bt:lines() do sl[#sl+1]=rsl end 
+    bt:close()
+    assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")    
+end
+
+function JCR_Extract(p1,p2,p3)
+  local data
+  if type(p1)=='table' and type(p2)=='string' and type(p3)=='string' then
+   love.filesystem.write(JCR_B(p1,p2),p3)
+   return
+  elseif type(p1)=='string' and type(p2)=='string' and type(p3)=='nil' then
+   love.filesystem.write(JCR_B(p1),p2)    
+   return
+  elseif type(p1)=='string' and type(p2)=='string' and type(p3)=='string' then
+   if suffixed(p1,".jcr") then
+      local d = ""
+      if not prefixed(p3,"/") then d=love.filesystem.getSaveDirectory( ).."/" end
+      JCR_TRUEEXTRACT(p1,p2,d..p3)
+   else
+      love.filesystem.write(JCR_B(p1,p2),p3)   
+   end         
+  else
+     error("JCR_Extract("..sval(p1)..","..sval(p2)..","..sval(p3).."): Invalid parameters input")
+  end        
+end
+
 function JCR_GetDir(p1,p2,p3)
    local mj,dir,trimpath = p1,p2,p3
    if p3==nil then mj,dir,trimpath=jcr,p1,p2 end
@@ -450,7 +480,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.17")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.21")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -595,7 +625,7 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 18.01.13
+  version: 18.01.21
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -614,7 +644,7 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.13")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.21")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -632,6 +662,23 @@ Ryanna = {
 	LoveVersion = string.format("%d.%d.%d - %s",love.getVersion() ) -- This line is dirty code straight from the toilet, but I don't care :P
 	
 }
+
+
+function OlderLove(maj,min,sub,selfinc) -- returns true if the love version is older than the set number
+   local lvmaj,lvmin,lvsub,lvcn = love.getVersion()
+   if lvmaj<maj then return true end
+   if lvmin<min and lvmaj==maj then return true end
+   if lvsub<sub and lvmin==min and lvmaj==maj then return true end
+   return selfinc and lvsub==sub and lvmin==min and lvmaj==maj 
+end
+
+function NewerLove(maj,min,sub,selfinc) -- returns true if the love version is newer than the set number
+   local lvmaj,lvmin,lvsub,lvcn = love.getVersion()
+   if lvmaj>maj then return true end
+   if lvmin>min and lvmaj==maj then return true end
+   if lvsub>sub and lvmin==min and lvmaj==maj then return true end
+   return selfinc and lvsub==sub and lvmin==min and lvmaj==maj 
+end
 
 
 love.filesystem.isDir = love.filesystem.isDirectory
@@ -952,7 +999,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.17")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.21")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
@@ -960,7 +1007,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.13")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.21")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 
