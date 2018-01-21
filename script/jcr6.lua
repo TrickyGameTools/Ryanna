@@ -154,6 +154,36 @@ function JCR_B(j,nameentry,lines)
 	end	
 end
 
+function JCR_TRUEEXTRACT(arc,source,target)
+    local bt = io.popen("'"..jcrx.."' extract '"..source.."' '"..target.."'")
+    assert(bt,"Pipe open failed in extraction request")
+    local sl={}
+    for rsl in bt:lines() do sl[#sl+1]=rsl end 
+    bt:close()
+    assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")    
+end
+
+function JCR_Extract(p1,p2,p3)
+  local data
+  if type(p1)=='table' and type(p2)=='string' and type(p3)=='string' then
+   love.filesystem.write(JCR_B(p1,p2),p3)
+   return
+  elseif type(p1)=='string' and type(p2)=='string' and type(p3)=='nil' then
+   love.filesystem.write(JCR_B(p1),p2)    
+   return
+  elseif type(p1)=='string' and type(p2)=='string' and type(p3)=='string' then
+   if suffixed(p1,".jcr") then
+      local d = ""
+      if not prefixed(p3,"/") then d=love.filesystem.getSaveDirectory( ).."/" end
+      JCR_TRUEEXTRACT(p1,p2,d..p3)
+   else
+      love.filesystem.write(JCR_B(p1,p2),p3)   
+   end         
+  else
+     error("JCR_Extract("..sval(p1)..","..sval(p2)..","..sval(p3).."): Invalid parameters input")
+  end        
+end
+
 function JCR_GetDir(p1,p2,p3)
    local mj,dir,trimpath = p1,p2,p3
    if p3==nil then mj,dir,trimpath=jcr,p1,p2 end
