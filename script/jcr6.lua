@@ -155,12 +155,13 @@ function JCR_B(j,nameentry,lines)
 end
 
 function JCR_TRUEEXTRACT(arc,source,target)
-    local bt = io.popen("'"..jcrx.."' extract '"..source.."' '"..target.."'")
+    local cmd="'"..jcrx.."' extract '"..arc.."' '"..source.."' '"..target.."'"
+    local bt = io.popen(cmd)
     assert(bt,"Pipe open failed in extraction request")
     local sl={}
     for rsl in bt:lines() do sl[#sl+1]=rsl end 
     bt:close()
-    assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")    
+    assert(sl[1]=="OK",(sl[2] or sl[1] or "Unknown error from jcrx").." \n>"..cmd)    
 end
 
 function JCR_Extract(p1,p2,p3)

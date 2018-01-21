@@ -57,6 +57,19 @@ function NewerLove(maj,min,sub,selfinc) -- returns true if the love version is n
 end
 
 
+function TablePack(tab)
+   local max=0
+   for i,_ in pairs(tab) do 
+       if i>max then max=i end
+   end
+   if max==0 then return end
+   local temptab = {}
+   for i=1,max do
+       if tab[i] then temptab[#temptab+1]=tab[i] tab[i]=nil end
+   end
+   for i,v in ipairs(temptab) do tab[i]=v end
+end
+
 love.filesystem.isDir = love.filesystem.isDirectory
 
 -- include use.Lua and jcr6.lua which now have not made their official entrace, so I gotta call them manually

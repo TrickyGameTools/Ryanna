@@ -323,12 +323,13 @@ function JCR_B(j,nameentry,lines)
 end
 
 function JCR_TRUEEXTRACT(arc,source,target)
-    local bt = io.popen("'"..jcrx.."' extract '"..source.."' '"..target.."'")
+    local cmd="'"..jcrx.."' extract '"..arc.."' '"..source.."' '"..target.."'"
+    local bt = io.popen(cmd)
     assert(bt,"Pipe open failed in extraction request")
     local sl={}
     for rsl in bt:lines() do sl[#sl+1]=rsl end 
     bt:close()
-    assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")    
+    assert(sl[1]=="OK",(sl[2] or sl[1] or "Unknown error from jcrx").." \n>"..cmd)    
 end
 
 function JCR_Extract(p1,p2,p3)
@@ -680,6 +681,19 @@ function NewerLove(maj,min,sub,selfinc) -- returns true if the love version is n
    return selfinc and lvsub==sub and lvmin==min and lvmaj==maj 
 end
 
+
+function TablePack(tab)
+   local max=0
+   for i,_ in pairs(tab) do 
+       if i>max then max=i end
+   end
+   if max==0 then return end
+   local temptab = {}
+   for i=1,max do
+       if tab[i] then temptab[#temptab+1]=tab[i] tab[i]=nil end
+   end
+   for i,v in ipairs(temptab) do tab[i]=v end
+end
 
 love.filesystem.isDir = love.filesystem.isDirectory
 
