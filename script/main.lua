@@ -40,6 +40,23 @@ Ryanna = {
 }
 
 
+function OlderLove(maj,min,sub,selfinc) -- returns true if the love version is older than the set number
+   local lvmaj,lvmin,lvsub,lvcn = love.getVersion()
+   if lvmaj<maj then return true end
+   if lvmin<min and lvmaj==maj then return true end
+   if lvsub<sub and lvmin==min and lvmaj==maj then return true end
+   return selfinc and lvsub==sub and lvmin==min and lvmaj==maj 
+end
+
+function NewerLove(maj,min,sub,selfinc) -- returns true if the love version is newer than the set number
+   local lvmaj,lvmin,lvsub,lvcn = love.getVersion()
+   if lvmaj>maj then return true end
+   if lvmin>min and lvmaj==maj then return true end
+   if lvsub>sub and lvmin==min and lvmaj==maj then return true end
+   return selfinc and lvsub==sub and lvmin==min and lvmaj==maj 
+end
+
+
 love.filesystem.isDir = love.filesystem.isDirectory
 
 -- include use.Lua and jcr6.lua which now have not made their official entrace, so I gotta call them manually
