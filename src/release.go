@@ -20,15 +20,17 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.01
+Version: 18.02.05
 */
 package main
 
 import(
 	"trickyunits/qff"
 	"trickyunits/mkl"
+	"trickyunits/qstr"
 	"trickyunits/shell"
 	"trickyunits/dirry"
+	"path"
 	"fmt"
 	"os"
 )
@@ -36,12 +38,27 @@ import(
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - release.go","18.01.01")
+mkl.Version("Ryanna - Builder for jcr based love projects - release.go","18.02.05")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - release.go","GNU General Public License 3")
 }
 
+func copydependencies(p,target string){
+	tgt:=target
+	if qstr.Right(tgt,1)!="/" {tgt+="/"}
+	for _,dep := range dependencies {
+		tf := tgt + path.Base(dep)
+		tsize:=-1; if qff.Exists(tf) {tsize= qff.FileSize(tf) }
+		osize:=qff.FileSize(dep)
+		if osize!=tsize {
+			aprint  ("yellow",p+": Copying dependency: ")
+			aprintln("cyan",  dep)
+			err:=qff.CopyFile(dep,tf); if err!=nil { crash(err.Error()) }
+		}
+	}
+}
+
 func release_darwin(target,suf string){
-	icon:=pask("MACICON","Mac icon: ","")
+	icon:=pask("MACICON","Mac: icon: ","")
 	pwd:=qff.PWD()
 	err:=os.Chdir(target)	
 	if err!=nil { crash(err.Error() ) }
@@ -71,6 +88,7 @@ func release_darwin(target,suf string){
 	aprintln("yellow","Mac: Attaching icon")
 	err=qff.CopyFile(icon,exe+"/Contents/Resources/GameIcon.icns"); if err!=nil { crash(err.Error()) }
 	err=qff.CopyFile(icon,exe+"/Contents/Resources/OS X AppIcon.icns"); if err!=nil { crash(err.Error()) }
+	copydependencies("Mac",exe+"/Contents/Resources")
 	if suf!="" || prjgini.C("Package")=="JCR" {
 		aprintln("yellow","Mac: Attaching jcrx")
 		err=qff.CopyFile(mydir+"/jcrx/jcrx_darwin",exe+"/Contents/Resources/jcrx"); if err!=nil { crash(err.Error()) }
@@ -106,6 +124,7 @@ func release_windows(target,suf string,bit int) {
 	swapbuild:=swap+"Build/"
 	orilove:=swapbuild+"love.love"
 	err=qff.CopyFile(orilove,prjgini.C("Exe")+".love"); if err!=nil { crash(err.Error()) }
+	copydependencies(wd,path.Dir(exe))
 	if suf!="" || prjgini.C("Package")=="JCR" {
 		aprintln("yellow",wd+": Attaching jcrx")
 		err=qff.CopyFile(mydir+"/jcrx/jcrx_windows","jcrx.exe"); if err!=nil { crash(err.Error()) }

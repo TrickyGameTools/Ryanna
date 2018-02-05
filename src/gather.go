@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.01.12
+Version: 18.02.05
 */
 package main
 
@@ -43,7 +43,7 @@ import (
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.01.12")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.02.05")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -280,7 +280,25 @@ func gather(test bool){
 		shell.Shell("zip -9 '"+dirry.Dirry(zipf)+"' alias.data")
 		os.Chdir(p)
 	}
-	
+	// dynamic
+	if prjgini.ListExists("DYNAMICJCR."+platform){
+		for _,dj:=range prjgini.List("DYNAMICJCR."+platform){
+			imp:="IMPORT"
+			fil:=dj
+			if qstr.Left(dj,1)=="*" { 
+				imp="REQUIRE"
+				fil=qstr.Right(dj,len(dj)-1)
+			}
+			if test {
+				jif += imp+":"+fil
+			} else if prjgini.C("Package")=="JCR" {
+				dependencies = append(dependencies,fil)
+				jif += imp+":"+path.Base(fil)
+			} else {
+				crash("Dynamic JCRs are not supported in a full zip project!")
+			}
+		}
+	}
 	// jcr build
 	if calljcr {
 		aprintln("cyan","Creating JCR6 work file")
