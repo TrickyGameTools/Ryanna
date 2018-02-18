@@ -169,7 +169,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.01.21
+  version: 18.02.18
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -188,9 +188,12 @@ end
 local ldir = love.filesystem.getSourceBaseDirectory()
 
 local jcrx
+local winspace
 if RYANNA_LOAD_JCR then
-	if platform == "Windows" then
-		jcrx = ldir.."\\jcrx"
+	if platform == "Windows" then	  	
+		jcrx = ldir.."\\jcrx.exe"
+		jcrx = jcrx:gsub("/","\\")
+		winspace="DIE_VIEZE_VUILE_FUCK_WINDOWS_HEEFT_EEN_SPATIEBALK_NODIG"
 	elseif platform == "OS X" then
 		jcrx = ldir.."//jcrx"
 	elseif platform == "Linux" then
@@ -215,8 +218,13 @@ function Dir2JCR(jfile)
 end   
 
 function JCR_Dir(jfile)
-	local jcall = "'"..jcrx.."' dirout '"..jfile.."' lua"
-	--print ("debug> ",jcall)
+  local jcall
+  if platform == "Windows" then
+     jcall = '"'..jcrx..'" dirout '..jfile:gsub(" ",winspace).." lua"
+  else
+	   jcall = " \""..jcrx.."\" dirout \""..jfile.."\" lua "
+	end
+	print ("debug> ",jcall)
 	local bt = io.popen(jcall)
 	-- sl = bt:readlines()
 	local sl = {}
@@ -296,7 +304,12 @@ function JCR_B(j,nameentry,lines)
 	  local rett = mysplit(rets,"\n")
 	  return rett
 	end
-	local bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
+	local bt
+	if platform=='Windows' then
+	  bt = io.popen('"'..jcrx..'" typeout '..mj.from:gsub(" ",winspace).." "..entry:gsub(" ",winspace))
+	else 
+	  bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
+	end
 	if lines then
 	 -- sl = bt:readlines()
 	 local sl = {}
@@ -481,7 +494,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.21")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.02.18")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -1013,7 +1026,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.01.21")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.02.18")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
