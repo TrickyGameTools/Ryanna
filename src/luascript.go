@@ -639,7 +639,7 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 18.01.21
+  version: 18.02.23
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -658,7 +658,7 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.01.21")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.02.23")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -918,7 +918,13 @@ local ret = { [true] = s, [false]=alt }
 return ret[safe]     
 end 
 
-
+function round(a)
+   if a>0 then
+      return math.floor(a+.5)
+   else 
+      return math.ceil(a-.5)
+   end
+end       
 
 
 
@@ -1034,7 +1040,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.01.21")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.02.23")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 
