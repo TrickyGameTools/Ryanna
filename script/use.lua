@@ -1,7 +1,7 @@
 --[[
   use.lua
   Ryanna - Script
-  version: 18.01.12
+  version: 18.04.21
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.01.12")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.04.21")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -34,8 +34,11 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib Licen
 -- but is not required)
 function Use(imp,noreturn)
 	-- single file
+	local debug --= true
 	local wimp = string.upper(imp)
 	local ret
+	local inits={}
+	local function dc(txt) if debug then CSay("DEBUG> "..txt) end end
 	if right(wimp,4)==".LUA" then
 		ret = PreProcess(imp)
 		if noreturn then return nil else return ret end
@@ -103,13 +106,16 @@ function Use(imp,noreturn)
 			if v.nomerge then
 			  local ks  = mysplit(k,"/")
 			  local key = ks[#ks]
-				if v.me then print("WARNING! 'me' field set in module part.") else v.me = ret end
+				if v.me then print("WARNING! 'me' field set in module part.") else v.me = ret end				
 				ret[key] = v
 				--print('Sub '..key..' added')
 			else 
-				for k2,v2 in pairs(v) do
-					if ret[k2] then print("WARNING! Duplicate identifier '"..k2.."' found!") end
-					ret[k2] = v2
+				for k2,v2 in pairs(v) do				
+				  if k2=='init' then inits[#inits+1]=v2 dc("Init caught in: "..k) else
+				     dc("In "..k.." there is a "..type(v2).." named "..k2)
+					   if ret[k2] then print("WARNING! Duplicate identifier '"..k2.."' found!") end
+					   ret[k2] = v2
+					end   
 				end
 			end
 		else
@@ -117,6 +123,7 @@ function Use(imp,noreturn)
 		end
 	end
 	--for k,_ in spairs(ret) do print("= "..k) end -- debug line
+	for f in each(inits) do f(ret) dc("Initcall") end
 	return ret
 end
 

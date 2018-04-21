@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.02.23
+  version: 18.04.21
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.02.23")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.04.21")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -94,6 +94,22 @@ return function()
     end
 end
 
+
+
+function secu_each(b) -- This will copy all elements of a table to a local table before processing. This takes a bit more time (prior to the workout and after it when the extra table has to be released), but is safer to use. Very useful when the table you wanna process is being altered during the process (like removing elements), but you're not wanting to make that influence the iteration. So if you want speed, use each. When you want a safe approach, use this.
+	local i=0
+	a={}
+	for i,e in ipairs(b) do a[i]=e end
+	if type(a)~="table" then
+	print("Each received a "..type(a).."!",255,0,0)
+		return nil
+	end
+	return function()
+		i=i+1
+		if a[i] then return a[i] end
+	end
+end
+
 function ieach(a) -- BLD: Same as each, but now in reversed order
 local i=#a+1
 if type(a)~="table" then
@@ -104,6 +120,21 @@ return function()
     i=i-1
     if a[i] then return a[i] end
     end
+end
+
+--[[
+    "for i=x,y,z do" is normally translated to BASIC as "for i=x to y step z"
+    This basically translates to "for i=x until y step z"
+    Of course I know "y-1" is an option, but that is only safe when using integers. When using non-integers, this is not the safest route to go
+]]
+function urange(start,einde,stappen)
+	local i=start
+	return function()
+		if not i<einde then return nil end
+		ret = i
+		i = i + stappen
+		return ret
+	end
 end
 
 --[[
