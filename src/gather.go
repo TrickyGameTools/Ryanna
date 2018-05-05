@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.02.05
+Version: 18.05.05
 */
 package main
 
@@ -43,7 +43,7 @@ import (
 var libdebug = false
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.02.05")
+mkl.Version("Ryanna - Builder for jcr based love projects - gather.go","18.05.05")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - gather.go","GNU General Public License 3")
 }
 
@@ -72,6 +72,17 @@ func ziplib(dir,lib,zipf string){
 	if err!=nil { crash(err.Error()) }
 	shell.Shell("zip -r -9 '"+dirry.Dirry(zipf)+"' Libs/"+libe)
 	os.Chdir(od)
+}
+
+func createconfig(sb,zf string){
+	c:=prjgini.List("CONFIG")
+	if len(c)==0 { return }
+	aprintln("cyan","Configuring love program")
+	out:="function conf(ryannaconfig)\n"
+	for _,l:=range(c) { out+="\tryannaconfig."+l+"\n" }
+	out+="end\n\n"
+	err:=qff.WriteStringToFile(dirry.Dirry(sb+"conf.lua"),out)
+	if err!=nil { crash(err.Error())}	
 }
 
 func gather(test bool){
@@ -104,6 +115,7 @@ func gather(test bool){
 		err := qff.WriteStringToFile(dirry.Dirry(swapbase+f+".lua"),bstr)
 		if err!=nil { crash(err.Error()) }
 	}
+	createconfig(swapbase,zipf)
 	zip(swapbase,zipf)
 	// All preps done, now to gather it all
 	for _,d:=range dirstoprocess {

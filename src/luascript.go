@@ -502,7 +502,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 	script["use"] = `--[[
   use.lua
   Ryanna - Script
-  version: 18.03.01
+  version: 18.04.21
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -521,7 +521,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.03.01")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.04.21")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -646,7 +646,7 @@ end
 	script["main"] = `--[[
   main.lua
   
-  version: 18.02.23
+  version: 18.04.21
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -665,7 +665,7 @@ end
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.02.23")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.04.21")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -1074,11 +1074,11 @@ Use(RYANNA_MAIN_SCRIPT)
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.03.01")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.04.21")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.02.23")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.04.21")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 

@@ -4,7 +4,7 @@
 	
 	
 	
-	(c) Jeroen P. Broks, 2017, All rights reserved
+	(c) Jeroen P. Broks, 2017, 2018, All rights reserved
 	
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.31
+Version: 18.05.05
 */
 package main
 
@@ -36,7 +36,7 @@ import (
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","17.12.31")
+mkl.Version("Ryanna - Builder for jcr based love projects - meta.go","18.05.05")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - meta.go","GNU General Public License 3")
 }
 
@@ -78,4 +78,5 @@ func asksys() { // strictly speaking not meta, but handier to have it here.
 		a := strings.ToUpper(ask("PACKAGE","Package as JCR or as ZIP:","JCR"))
 		if a=="ZIP" || a=="JCR" { break }
 	}
+	initlist("CONFIG","Do you have any special settings in mind for the conf.lua file?")
 }
