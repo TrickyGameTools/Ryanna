@@ -78,7 +78,7 @@ func createconfig(sb,zf string){
 	c:=prjgini.List("CONFIG")
 	if len(c)==0 { return }
 	aprintln("cyan","Configuring love program")
-	out:="function conf(ryannaconfig)\n"
+	out:="function love.conf(ryannaconfig)\n"
 	for _,l:=range(c) { out+="\tryannaconfig."+l+"\n" }
 	out+="end\n\n"
 	err:=qff.WriteStringToFile(dirry.Dirry(sb+"conf.lua"),out)
