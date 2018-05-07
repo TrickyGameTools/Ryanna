@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.02.18
+  version: 18.05.07
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -35,6 +35,40 @@ if RYANNA_LOAD_JCR then
 	end
 end
 -- $FI
+
+
+-- The IsFileType/IsDir/IsFile/IsSymlink functions are required as the original features were deprecated since LOVE 11.0 and this way old and new versions can handle this!
+function IsFileType(file,ftype)
+    if love.filesystem.getInfo then
+       d = love.filesystem.getInfo( file )
+       if not d then return false end
+       return d.filetype==ftype
+    else
+       if ftype=='file' then 
+          return love.filesystem.isFile(file)
+       elseif ftype=='directory' then
+          return love.filesystem.isDirectory(file)
+       elseif ftype=='symlink' then
+          return love.filesystem.isSymlink(file)
+       else
+          error("I've never heard of type "..ftype)
+       end
+    end
+end          
+
+function IsFile(file)
+   return IsFileType(file,'file')
+end   
+
+function IsDir(file) 
+   return IsFileType(file,'directory')
+end
+IsDirectory=IsDir
+
+function IsSymlink(file)
+   return IsFileType(file,"symlink")
+end      
+
 
 function Dir2JCR(jfile)
    if not RYANNA_LOAD_JCR then return false,"This is no JCR project" end
@@ -94,7 +128,7 @@ function LOVE_FullDir(adir) -- recursive dir
   local slash = "/"; if dir=="" then slash="" end
   for i,f in ipairs(list) do
       entries[string.upper(dir..slash..f)] = { entry = dir..slash..f, LOVE = dir..slash..f, mainfile = love.filesystem.getSource() }
-      if love.filesystem.isDir(dir..slash..f) then 
+      if IsDir(dir..slash..f) then 
          local te = LOVE_FullDir(dir..slash..f)
          for k,d in pairs(te.entries) do entries[k]=d end
       end
@@ -285,7 +319,7 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 		  end -- if key==entres
 		end -- for key,res  
 	end -- for i,d
-	if love.filesystem.isFile('alias.data') then
+	if IsFile('alias.data') then
 	   local aliasstring = love.filesystem.read('alias.data')
 	   local aliaslines = mysplit(aliasstring,"\n")
 	   for i,aline in ipairs(aliaslines) do
@@ -326,6 +360,6 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.02.18")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.07")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
