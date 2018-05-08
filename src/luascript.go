@@ -169,7 +169,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.05.07
+  version: 18.05.08
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -186,9 +186,12 @@ end
   3. This notice may not be removed or altered from any source distribution.
 ]]
 local ldir = love.filesystem.getSourceBaseDirectory()
-
+local jcrcrash = true
 local jcrx
 local winspace
+
+JCR_Error=""
+
 if RYANNA_LOAD_JCR then
 	if platform == "Windows" then	  	
 		jcrx = ldir.."\\jcrx.exe"
@@ -237,8 +240,25 @@ function IsSymlink(file)
    return IsFileType(file,"symlink")
 end      
 
+function jassert(cond,err)
+   if JCR_Crash then
+      assert(cond,err)
+   else
+      if not cond then JCR_Error=err return true end
+   end
+   return false
+end      
+
+function jerror(err)
+  if JCR_Crash then
+     error(err)
+  else
+     JCR_Error=err
+  end
+end   
 
 function Dir2JCR(jfile)
+   JCR_Error=""   
    if not RYANNA_LOAD_JCR then return false,"This is no JCR project" end
    local jcall = "'"..jcrx.."' transform '"..jfile.."'"
    local bt = io.popen(jcall)
@@ -252,6 +272,7 @@ function Dir2JCR(jfile)
 end   
 
 function JCR_Dir(jfile)
+  JCR_Error=""  
   local jcall
   if platform == "Windows" then
      jcall = '"'..jcrx..'" dirout '..jfile:gsub(" ",winspace).." lua"
@@ -264,12 +285,12 @@ function JCR_Dir(jfile)
 	local sl = {}
 	for rl in bt:lines() do sl[#sl+1]=rl end
 	bt:close()
-	assert(sl[1]=="OK","JCR-Dirout failure "..jfile.."\n"..(sl[2] or sl[1] or "No error message provided"))
+	if jassert(sl[1]=="OK","JCR-Dirout failure "..jfile.."\n"..(sl[2] or sl[1] or "No error message provided")) then return end
 	local s = ""
 	for i=2,#sl do s = s .. sl[i] .. "\n" end
 	local f=load(s,"JCR_DIR("..jfile..")")
 	local ret={}
-	assert(f,'Error parsing directory data')
+	if jassert(f,'Error parsing directory data') then return end
 	ret.entries = f()
 	ret.JCR_B = JCR_B
 	ret.from = jfile
@@ -311,22 +332,23 @@ function JCR_B(j,nameentry,lines)
 	if not nameentry then
 		entry = string.upper(j)
 		mj = jcr
-		assert ( mj , "JCR not set!" )
+		if jassert ( mj , "JCR not set!" ) then return end
 	else
 		entry = string.upper(nameentry)
 		if type(j)=='table' then
 			mj = j
 		else 
 			mj = JCR_Dir(j)
+			if not mj then return end
 		end
 	end
 	local e = string.upper(entry)
 	local edata = mj.entries[e]
-  assert(edata,"Entry "..entry.." not found")
+  if jassert(edata,"Entry "..entry.." not found") then return end
 	if edata.aliasfor then 
 	   local af=edata.aliasfor	   
 	   edata=mj.entries[edata.aliasfor:upper()] 
-	   assert(edata,"Entry '"..af.."' from alias "..entry.." not found")
+	   if jassert(edata,"Entry '"..af.."' from alias "..entry.." not found") then return end
 	   entry=af 
 	end
 	--print(serialize('jcr',mj)) -- debug line
@@ -350,7 +372,7 @@ function JCR_B(j,nameentry,lines)
 	 local s
 	 for rsl in bt:lines() do sl[#sl+1]=rsl end 
     bt:close()
-	 assert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx")
+	 if jassert(sl[1]=="OK",sl[2] or sl[1] or "Unknown error from jcrx") then return end
 	 -- if lines then
 		  s = {}
 		  for i=2,#sl do s[#s+1] = sl[i] end
@@ -362,7 +384,7 @@ function JCR_B(j,nameentry,lines)
 	else
 	  local head=bt:read(3)
 	  local data=bt:read('*all')
-	  assert(head=="OK\n","JCR_B failed "..(data or "Unprintable error"))
+	  if jassert(head=="OK\n","JCR_B failed "..(data or "Unprintable error")) then return end
 	  bt:close()
 	  --print(data)
     return data
@@ -372,11 +394,11 @@ end
 function JCR_TRUEEXTRACT(arc,source,target)
     local cmd="'"..jcrx.."' extract '"..arc.."' '"..source.."' '"..target.."'"
     local bt = io.popen(cmd)
-    assert(bt,"Pipe open failed in extraction request")
+    if jassert(bt,"Pipe open failed in extraction request") then return end
     local sl={}
     for rsl in bt:lines() do sl[#sl+1]=rsl end 
     bt:close()
-    assert(sl[1]=="OK",(sl[2] or sl[1] or "Unknown error from jcrx").." \n>"..cmd)    
+    jassert(sl[1]=="OK",(sl[2] or sl[1] or "Unknown error from jcrx").." \n>"..cmd)    
 end
 
 function JCR_Extract(p1,p2,p3)
@@ -396,11 +418,12 @@ function JCR_Extract(p1,p2,p3)
       love.filesystem.write(JCR_B(p1,p2),p3)   
    end         
   else
-     error("JCR_Extract("..sval(p1)..","..sval(p2)..","..sval(p3).."): Invalid parameters input")
+     jerror("JCR_Extract("..sval(p1)..","..sval(p2)..","..sval(p3).."): Invalid parameters input")
   end        
 end
 
 function JCR_GetDir(p1,p2,p3)
+  JCR_Error=""
    local mj,dir,trimpath = p1,p2,p3
    if p3==nil then mj,dir,trimpath=jcr,p1,p2 end
    local cd = upper(dir)
@@ -426,11 +449,12 @@ function JCR_Lines(j,nameentry)
 end
 
 function JCR_Exists(j,nameentry)
+  JCR_Error=""
 	local mj
 	if not nameentry then
 		entry = string.upper(j)
 		mj = jcr
-		assert ( mj , "JCR not set!" )
+		if jassert ( mj , "JCR not set!" ) then return end
 	else
 		entry = string.upper(nameentry)
 		if type(mj)=='table' then
@@ -445,11 +469,12 @@ function JCR_Exists(j,nameentry)
 end
 
 function JCR_HasDir(j,namedir)
+  JCR_Error=""  
 	local mj,dir
 	if not namedir then
 		dir= string.upper(j)
 		mj = jcr
-		assert ( mj , "JCR not set!" )
+		if jassert ( mj , "JCR not set!" ) then return end
 	else
 		dir= string.upper(namedir)
 		if type(mj)=='table' then
@@ -469,6 +494,7 @@ end
 
 
 function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna's findings.
+  JCR_Error=""
   local ret
 	ret = {}
 	ret.entries = {}
@@ -508,9 +534,12 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	       local source = trim(asplit[1]):upper()
 	       local puretarget = trim(asplit[2])
 	       local target = puretarget:upper()
-	       assert(source,"Syntax error in alias file line: "..i)
-	       assert(target,"Syntax error in alias file line: "..i.."   '=>' expected")
-	       assert(ret.entries[source],"Alias error -- Original ("..source..") doesn't exit ("..aline..") line: "..i)
+	       if
+	        jassert(source,"Syntax error in alias file line: "..i) or
+	        jassert(target,"Syntax error in alias file line: "..i.."   '=>' expected") or
+	        jassert(ret.entries[source],"Alias error -- Original ("..source..") doesn't exit ("..aline..") line: "..i) then
+	         return
+	       end
 	       if ret.entries[target] then print("WARNING! Alias will overwrite existing entry '"..target.."' (line: "..i..")") end
 	       ret.entries[target]={ aliasfor=source}
 	       --[[
@@ -528,7 +557,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.07")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.08")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -1104,7 +1133,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.07")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.08")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
