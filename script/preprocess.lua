@@ -1,7 +1,7 @@
 --[[
   preprocess.lua
   
-  version: 18.01.13
+  version: 18.05.12
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -72,7 +72,7 @@ local prid = {
 	["DEFINE"] = function(sl,h,m,n,ld)
 		if h and m then return h,m end
 		assert(#sl>2,"$DEFINE expects options in line: "..n)
-		d = string.upper(sl[3])
+		local d = string.upper(sl[3])
 		if prefixed(d,"#") then
 			ld[d]=true
 		else
@@ -84,7 +84,7 @@ local prid = {
 	["UNDEF"] = function(sl,h,m,n,ld)
 		if h and m then return h,m end
 		assert(#sl>2,"$UNDEF expects options in line: "..n)
-		d = string.upper(sl[3])
+		local d = string.upper(sl[3])
 		if prefixed(d,"#") then
 			ld[d]=nil
 		else
@@ -112,8 +112,11 @@ local prid = {
 			pre = pre .. asid .. " = " ..asid.. " or "
 		end
 		return h,m,pre .. " Use('"..sl[3].."') "
-	end
+	end,
 
+  ["RETURN"] = function(sl,h,m,n,ld)
+     return h,m,"return "..sl[3]
+  end
 }
 
 local PPFs = {}
