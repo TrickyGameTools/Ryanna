@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.05.08
+  version: 18.05.13
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -270,8 +270,10 @@ function JCR_GetDir(p1,p2,p3)
    return ret
 end
 
-function JCR_D(file)
-     local data = JCR_B(file)
+function JCR_D(p1,p2)
+     local data = JCR_B(p1,p2)
+     local file
+     if p2 then file=p2 else file=p1 end
      local fdata = love.filesystem.newFileData(data,file)
      return fdata
 end
@@ -389,6 +391,6 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.08")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.13")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
