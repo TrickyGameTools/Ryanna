@@ -193,10 +193,12 @@ function JCR_B(j,nameentry,lines)
 	  return rett
 	end
 	local bt
-	if platform=='Windows' then
-	  bt = io.popen('"'..jcrx..'" typeout '..mj.from:gsub(" ",winspace).." "..entry:gsub(" ",winspace))
+	if platform=='Windows' then	  
+	  -- old -- bt = io.popen('"'..jcrx..'" typeout '..mj.from:gsub(" ",winspace).." "..entry:gsub(" ",winspace))
+	  bt = io.popen(("'%s' getblock %d %d %d %s '%s'"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile:gsub(" ",winspace)))
 	else 
-	  bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
+	  -- old -- bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
+	  bt = io.popen(("'%s' getblock %d %d %d %s '%s'"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile))
 	end
 	if lines then
 	 -- sl = bt:readlines()
