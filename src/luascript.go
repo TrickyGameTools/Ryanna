@@ -172,7 +172,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.05.13
+  version: 18.05.15
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -329,6 +329,37 @@ function LOVE_FullDir(adir) -- recursive dir
   return ret
 
 end 
+
+function gJCRX()
+   return jcrx
+end   
+
+function JCRWINSPACE(s,onlyonwindows)
+    if onlyonwindows and platform~="windows" then return s end
+    return s:gsub(" ",winspace)
+end
+
+function JCRXCall(para)
+   assert(type(para)=='table',"JCRXCall("..type(para)..": I need a table, dummy!") 
+   local opara=""
+   for i,p in ipairs(para) do
+       if #opara>0 then opara=opara.." " end
+       if platform=='Windows' then  
+          opara = opara .. p:gsub(" ",winspace)
+       else
+          opara = opara .. '"'..p..'"'
+       end      
+   end
+   local bt=io.popen('"'..jcrx..'" '..opara)
+   assert(bt,"Pipe failure\n",'"'..jcrx..'" '..opara)
+   local head=bt:read(3)
+   local data=bt:read('*all')
+   if head=="OK\n" then 
+      return true,data
+   else
+      return false,head..data
+   end   
+end    
 
 function JCR_B(j,nameentry,lines)
 	local mj,entry
@@ -564,7 +595,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.13")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.15")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -1140,7 +1171,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.13")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.15")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
