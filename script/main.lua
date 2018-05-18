@@ -98,7 +98,7 @@ end
 
 function secu_each(b) -- This will copy all elements of a table to a local table before processing. This takes a bit more time (prior to the workout and after it when the extra table has to be released), but is safer to use. Very useful when the table you wanna process is being altered during the process (like removing elements), but you're not wanting to make that influence the iteration. So if you want speed, use each. When you want a safe approach, use this.
 	local i=0
-	a={}
+	local a={}
 	for i,e in ipairs(b) do a[i]=e end
 	if type(a)~="table" then
 	print("Each received a "..type(a).."!",255,0,0)
@@ -108,6 +108,16 @@ function secu_each(b) -- This will copy all elements of a table to a local table
 		i=i+1
 		if a[i] then return a[i] end
 	end
+end
+
+function copytable(original,recuse)
+   local ret = {}
+   for k,v in pairs(original) do
+       if type(v)=="table" and recurse then ret[k]=copytable(v,true)
+       else ret[k]=v 
+       end
+   end    
+   return ret    
 end
 
 function ieach(a) -- BLD: Same as each, but now in reversed order
