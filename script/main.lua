@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.04.21
+  version: 18.05.20
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.04.21")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.05.20")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -244,7 +244,7 @@ function mysplit(inputstr, sep)
         if sep == nil then
                 sep = "%s"
         end
-        local t={} ; i=1
+        local t={} ; local i=1
         for str in string.gmatch(inputstr, "([^"..sep.."]+)") do
                 t[i] = str
                 i = i + 1
