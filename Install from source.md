@@ -55,3 +55,49 @@ ren love-11.1-macos.zip MAC64.zip
 ~~~
 WARNING! Take good note of the difference between *ren* (REName) and *rem* (REMark).
 
+
+Then you must also have the jcrx tool at the ready.
+In the folder where Ryanna is located there must be a subfolder named "jcrx"
+It needs:
+"jcrx_darwin" -- The executable for exporting to Mac
+"jcrx_windows" -- the executable for exporting to Windows (.exe may not be present. Ryanna puts that in by itself).
+"jcrx_linux" -- The executable for exporting to Linux (any distro)
+
+# IMPORTANT NOTE TO WINDOWS USERS WHEN IT COMES TO USING RYANNA TO EXPORT TO MAC AND LINUX.
+
+When using Ryanna to export to Mac and Linux, the game will initially NOT work. That is NOT a bug in Ryanna, but an issue with Windows being a DOS based system and Mac and Linux being Unix based systems. Where for Windows the extensions .exe, .com and .bat suffice to recognise a file as being exectuable, Unix based systems originally never had extensions and the extensions used today, well that's just a habit copied from MS-DOS, as the extensions WERE handy in quickly seeing what kind of data a file has. ;)
+
+In stead Unix uses the attribute system, which is completely different from the attribute system in Windows, and no, there's no way to get it compatible, no matter WHAT you try. 
+
+In Unix the "x" attribute has to tell the system a file is executable.
+
+On Mac these two files must have the "x" attribute:
+- mygame.app/contents/macos/love
+- mygame.app/contents/resources/jcrx
+
+On Linux LOVE itself is mostly downloaded as a dependency and then you don't have to worry about that one, but the jcrx file coming with the .love file (and other resource files) must have the x attribute.
+
+
+There is no way to make this happen in Windows, and unfortunately, there are also no archivers supporting attaching "x" to files (and why not is completely beyond me). 
+
+If you don't want your users to have to deal with this problem there is only one way to go. Install Virtual Box and install Linux on it. Any distro will do, and transfer your Mac and Linux exports to the virtual harddrive of your virtual Linux machine.
+
+Now let's just put the games in your home folder in the subfolder RyannaOutput (just for keeping this clean), and the Mac version in the Mac subfolder and the Linux version in the Linux subfolder, and let's assume you exported the game as "mygame".
+
+Open the terminal and type the next commands:
+~~~shell
+# Mac
+chmod +x ~/RyannaOut/Mac/mygame.app/Contents/MacOS/love
+chmod +x ~/RyannaOut/Mac/mygame.app/Conents/Resources/jcrx
+
+# Linux
+chmod +x ~/RyannaOut/Linux/jcrx
+~~~
+You can now zip the two exports from this harddrive and copy them back to your Windows systems. As long as they remain zipped, nothing's wrong.
+
+
+# AppImage
+
+You may want to convert the final output into an appimage to make sure your Linux users don't need any dependencies at all.
+I am still investigating how to make Ryanna properly deal with that. I regret to tell you that from Windows it will never be possible to export into AppImage, sorry. If it can be done from Mac, is something I can't tell yet, I need to properly sort that one out.
+For Linux I already got a script to easily do it, and but I didn't yet have to time to study it thoroughly. Once I did I will make sure the Linux version of Ryanna will be able to write everything in an AppImage, as I do support the portability of apps on Linux, as the giant need of (often conflicting) dependencies is a true achilles heel to the Linux system, I tell ya!
