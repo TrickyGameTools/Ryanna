@@ -1,7 +1,7 @@
 --[[
   main.lua
   
-  version: 18.05.20
+  version: 18.05.22
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.05.20")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.05.22")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -31,6 +31,13 @@ RYANNA_TITLE       = "$RyannaTitle$"; love.window.setTitle(RYANNA_TITLE)
 RYANNA_BUILDTYPE   = "$RyannaBuildType"    -- Will contain 'normal' in normal builds and 'test' in test builds. Handy for extra debugging features in Ryanna.
 
 platform = love.system.getOS( )
+
+--[[
+if platform=="Windows" then
+   RYANNA_LOAD_JCR = "$RyannaLoadJCRinWindows$"
+end 
+]]  
+   
 
 Ryanna = {
 	RyannaVersion = "$RyannaVersion$",

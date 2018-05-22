@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.02.05
+Version: 18.05.22
 */
 package main
 
@@ -38,7 +38,7 @@ import(
 
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - release.go","18.02.05")
+mkl.Version("Ryanna - Builder for jcr based love projects - release.go","18.05.22")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - release.go","GNU General Public License 3")
 }
 
@@ -97,7 +97,7 @@ func release_darwin(target,suf string){
 	os.Chdir(pwd)
 }
 
-func release_windows(target,suf string,bit int) {
+func release_windows(target,suf string,bit int,test bool) {
 	wd:=fmt.Sprintf("WIN%d",bit)
 	pwd:=qff.PWD()
 	err:=os.Chdir(target)	
@@ -111,19 +111,25 @@ func release_windows(target,suf string,bit int) {
 	if suf!="" { exe+="."+suf }
 	exe +=".exe"
 	aprintln("yellow",wd+": Creating distribution")
-	if !qff.Exists(exe) {
+	swap:=dirry.Dirry("$AppSupport$/$LinuxDot$Phantasar Productions/Ryanna/swap/")
+	if !qff.Exists("love.exe") {
 		aprintln("cyan",fmt.Sprintf("Unzipping love for Windows %d bit",bit))
 		uzc:="unzip -j '"+mydir+"/love/"+prjgini.C("LOVEVERSION")+"/"+wd+".zip' "
 		//aprintln("magenta",uzc) // debug line
 		shell.Shell(uzc)
-		err = os.Rename("love.exe",exe)
-		if err!=nil { crash(err.Error() ) }
+		//err = CopyFile("love.exe",exe) //os.Rename("love.exe",exe)
+		//if err!=nil { crash(err.Error() ) }
 	}
-	aprintln("yellow",wd+": Attaching resource")
-	swap:=dirry.Dirry("$AppSupport$/$LinuxDot$Phantasar Productions/Ryanna/swap/")
-	swapbuild:=swap+"Build/"
-	orilove:=swapbuild+"love.love"
-	err=qff.CopyFile(orilove,prjgini.C("Exe")+".love"); if err!=nil { crash(err.Error()) }
+	if test || prjgini.C("Package")=="JCR" {
+		
+		aprintln("yellow",wd+": Attaching resource")		
+		swapbuild:=swap+"Build/"
+		orilove:=swapbuild+"packed.jcr"
+		err=qff.CopyFile(orilove,prjgini.C("Exe")+".jcr"); if err!=nil { crash(err.Error()) }
+	}
+	aprintln("yellow",wd+": Creating game's executable")
+	err=qff.MergeFiles("love.exe",swap+"Build/zipped.zip",exe)
+	if err!=nil { crash(err.Error() ) }
 	copydependencies(wd,path.Dir(exe))
 	if suf!="" || prjgini.C("Package")=="JCR" {
 		aprintln("yellow",wd+": Attaching jcrx")
@@ -142,14 +148,14 @@ func release(test bool){
 		// It's pretty pointless to build for a platform you can't test anyway, since test builds only work on the computer on which they were built.
 		switch platform {
 			case "darwin":	release_darwin(prjgini.C("Test."+platform),"test.build")
-			case "windows":	release_windows(prjgini.C("Test."+platform),"test.build",32)
+			case "windows":	release_windows(prjgini.C("Test."+platform),"test.build",32,test)
 			case "linux":	release_linux(prjgini.C("Test."+platform),"test.build")
 		}
 		return
 	}
 	if prjgini.C("MAC64")=="YES" { release_darwin (prjgini.C("Release."+platform),"")    }
-	if prjgini.C("WIN32")=="YES" { release_windows(prjgini.C("Release."+platform),"",32) }
-	if prjgini.C("WIN64")=="YES" { release_windows(prjgini.C("Release."+platform),"",64) }
+	if prjgini.C("WIN32")=="YES" { release_windows(prjgini.C("Release."+platform),"",32,test) }
+	if prjgini.C("WIN64")=="YES" { release_windows(prjgini.C("Release."+platform),"",64,test) }
 	if prjgini.C("LINUX")=="YES" { release_linux  (prjgini.C("Release."+platform),"")    }
 	
 }

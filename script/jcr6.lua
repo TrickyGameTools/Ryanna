@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.05.15
+  version: 18.05.22
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -226,7 +226,7 @@ function JCR_B(j,nameentry,lines)
 	local bt
 	if platform=='Windows' then	  
 	  -- old -- bt = io.popen('"'..jcrx..'" typeout '..mj.from:gsub(" ",winspace).." "..entry:gsub(" ",winspace))
-	  bt = io.popen(("'%s' getblock %d %d %d %s '%s'"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile:gsub(" ",winspace)))
+	  bt = io.popen(("\"%s\" getblock %d %d %d %s %s"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile:gsub(" ",winspace)))
 	else 
 	  -- old -- bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
 	  bt = io.popen(("'%s' getblock %d %d %d %s '%s'"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile))
@@ -368,7 +368,12 @@ function BaseDir() -- Basically only called by Ryanna and loaded based on Ryanna
 	ret.from = love.filesystem.getSource()
 	ret.kind = "MIXED"	
 	local k = {}
+	if platform=='Windows' then
+	   ret.from=left(ret.from,#ret.from-4)..".jcr"
+	end
+	print("Analysing LOVE: "..love.filesystem.getSource())   
 	k[1] = LOVE_FullDir()
+	print("Analysing JCR:  "..ret.from)
 	if RYANNA_LOAD_JCR then k[2] = JCR_Dir(ret.from) end
 	for i,d in ipairs(k) do
 		for key,res in pairs(d) do 
@@ -424,6 +429,6 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.15")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.22")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]

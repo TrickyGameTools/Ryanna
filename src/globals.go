@@ -4,7 +4,7 @@
 	
 	
 	
-	(c) Jeroen P. Broks, 2017, All rights reserved
+	(c) Jeroen P. Broks, 2017, 2018, All rights reserved
 	
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 17.12.30
+Version: 18.05.22
 */
 package main
 
@@ -32,7 +32,7 @@ import "os"
 import "path"
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","17.12.30")
+mkl.Version("Ryanna - Builder for jcr based love projects - globals.go","18.05.22")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - globals.go","GNU General Public License 3")
 me,_ = os.Executable()
 mydir = path.Dir(me)
@@ -53,3 +53,5 @@ var script = map[string] string {}
 var Args []string
 
 var runfile string
+
+
