@@ -1,7 +1,7 @@
 --[[
   use.lua
   Ryanna - Script
-  version: 18.04.21
+  version: 18.06.06
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -20,7 +20,7 @@
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.04.21")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.06.06")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -140,3 +140,5 @@ function libdestroy(lib)
 	for key,v in pairs(lib)  do libdestroy(v); fld[#fld+1]=key end
 	for i,key in ipairs(fld) do lib[key] = nil end
 end
+
+destroylib=libdestroy

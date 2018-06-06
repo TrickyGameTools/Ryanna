@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.05.22
+  version: 18.06.06
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -73,7 +73,7 @@ function IsSymlink(file)
 end      
 
 function jassert(cond,err)
-   if JCR_Crash then
+   if jcrcrash then
       assert(cond,err)
    else
       if not cond then JCR_Error=err return true end
@@ -429,6 +429,6 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.22")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.06")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]

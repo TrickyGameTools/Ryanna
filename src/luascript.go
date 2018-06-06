@@ -244,7 +244,7 @@ function IsSymlink(file)
 end      
 
 function jassert(cond,err)
-   if JCR_Crash then
+   if jcrcrash then
       assert(cond,err)
    else
       if not cond then JCR_Error=err return true end
@@ -747,6 +747,8 @@ function libdestroy(lib)
 	for key,v in pairs(lib)  do libdestroy(v); fld[#fld+1]=key end
 	for i,key in ipairs(fld) do lib[key] = nil end
 end
+
+destroylib=libdestroy
 `
 
 	script["main"] = `--[[
