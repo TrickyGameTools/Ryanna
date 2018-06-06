@@ -172,7 +172,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.05.22
+  version: 18.06.06
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -600,7 +600,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.22")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.06")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -608,7 +608,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 	script["use"] = `--[[
   use.lua
   Ryanna - Script
-  version: 18.04.21
+  version: 18.06.06
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -627,7 +627,7 @@ mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib Lice
 -- Importer
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.04.21")
+mkl.version("Ryanna - Builder for jcr based love projects - use.lua","18.06.06")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 ]]
 
@@ -1195,11 +1195,11 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.05.22")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.06")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.04.21")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - use.lua","18.06.06")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
