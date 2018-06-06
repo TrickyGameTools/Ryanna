@@ -34,6 +34,7 @@ import (
 	"trickyunits/qff"
 	"trickyunits/qstr"
 	"trickyunits/ansistring"
+	"time"
 )
 
 type ac struct{
@@ -92,7 +93,7 @@ func main(){
 		aprintln("cyan",mkl.ListAll())
 		return
 	}
-	
+	r_starttime:=time.Now()
 	project = Args[0]
 	if path.Ext(project)=="" { project+=".rpf" } // rpf = Ryanna Project File
 	if !qff.Exists(project) {
@@ -118,4 +119,14 @@ func main(){
 	loveversion()
 	gather(*flagtest)
 	release(*flagtest)
+	r_endtime:=time.Now()
+	dur:=r_endtime.Sub(r_starttime)
+	sdur:=ansistring.SCol("Ryanna took ",ansistring.A_Yellow,0)
+	/*
+	sand:=false	
+	if dur.Hours()>0 { sdur+=ansistrig.SCol(fmt.Sprintf("%d ",dur.Hours()),ansistring.A_Cyan,0)+ansistring.SCol("hours ",ansistring.A_Yellow,0); sand=true }
+	*/
+	sdur+=ansistring.SCol(dur.String(),ansistring.A_Cyan,0)
+	sdur+=ansistring.SCol(" to build the entire package",ansistring.A_Yellow,0)
+	fmt.Printf("\n\t%s\n\n",sdur)
 }
