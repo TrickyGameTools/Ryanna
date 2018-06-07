@@ -20,7 +20,7 @@
 		
 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
 	to the project the exceptions are needed for.
-Version: 18.02.05
+Version: 18.06.07
 */
 package main
 
@@ -46,7 +46,7 @@ var cols = map[string] ac {}
 var dependencies = []string{}
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - main.go","18.02.05")
+mkl.Version("Ryanna - Builder for jcr based love projects - main.go","18.06.07")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.go","GNU General Public License 3")
 cols["lblue"] = ac{ansistring.A_Blue,ansistring.A_Bright}
 cols["yellow"] = ac{ansistring.A_Yellow,0}
