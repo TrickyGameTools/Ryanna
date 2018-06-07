@@ -172,7 +172,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.06.06
+  version: 18.06.07
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -359,7 +359,45 @@ function JCRXCall(para)
    else
       return false,head..data
    end   
-end    
+end
+
+--[[ Maybe not needed yet... We'll find out later.
+local classfakepipe = {}
+function classfakepipe:lines() return self.stream:lines() end 
+function classfakepipe:read(v) return self.stream:read() end
+function classfakepipe:close()
+    self.stream:close()
+    local del = "rm"
+    if platform=='Windows' then del='del' end
+    local bt = io.popen(del.." \""..self.file.."\"")
+    local res=bt:read('*all')
+    print("deletion: "..(res or 'nil'))
+    bt:close()    
+end
+
+local function fakepipex(j,pfile)
+    local success = love.filesystem.createDirectory( "FakePipe" )
+    assert(success,"Creating FakePipe directory failed")
+    local i = 0
+    local name
+    local file = replace(pfile,"\\","/")
+    local sfile = mysplit(file,"/")
+    local sn = mysplit(sfile[#sfile],".")
+    local ext = sn[#sn] if #sn==1 then ext="AnyData" end
+    local tname 
+    local wp = love.filesystem.getSaveDirectory( )
+    repeat
+        i = i + 1
+        tname = "FakePipe/Temp."..i.."."..ext
+    until not love.filesystem.isFile(tname)
+    local ok,dat = JCRXCall({'extract',j,pfile,wp.."/"..tname})
+    if not ok then error(dat) end
+    local ret = { file = wp.."/"..tname }
+    ret.stream=io.open(ret.file,"rb")
+    for k,v in pairs(classfakepipe) do ret[k]=v end
+    return ret
+end  
+-- ]]      
 
 function JCR_B(j,nameentry,lines)
 	local mj,entry
@@ -397,7 +435,7 @@ function JCR_B(j,nameentry,lines)
 	local bt
 	if platform=='Windows' then	  
 	  -- old -- bt = io.popen('"'..jcrx..'" typeout '..mj.from:gsub(" ",winspace).." "..entry:gsub(" ",winspace))
-	  bt = io.popen(("\"%s\" getblock %d %d %d %s %s"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile:gsub(" ",winspace)))
+	  bt = io.popen(("\"%s\" getblock %d %d %d %s %s"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile:gsub(" ",winspace)),'rb')
 	else 
 	  -- old -- bt = io.popen("'"..jcrx.."' typeout '"..mj.from.."' '"..entry.."'")
 	  bt = io.popen(("'%s' getblock %d %d %d %s '%s'"):format(jcrx,edata.offset,edata.compressedsize,edata.size,edata.storage,edata.mainfile))
@@ -600,7 +638,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.06")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.07")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -1195,7 +1233,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.06")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.07")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
