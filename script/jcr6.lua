@@ -1,7 +1,7 @@
 --[[
   jcr6.lua
   Ryanna - Script
-  version: 18.06.07
+  version: 18.06.09
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -142,21 +142,32 @@ function LOVE_Dir(skipwork) -- if set to true it will skip the directories swap 
 	return ret
 end
 
-function LOVE_FullDir(adir) -- recursive dir
+function LOVE_FullDir(adir,force) -- recursive dir
   local dir = adir or ""
   local list = love.filesystem.getDirectoryItems( dir or "" )
   local entries = {}
   local slash = "/"; if dir=="" then slash="" end
-  for i,f in ipairs(list) do
+  if dir~="UNJCR" or force then
+    for i,f in ipairs(list) do
       entries[string.upper(dir..slash..f)] = { entry = dir..slash..f, LOVE = dir..slash..f, mainfile = love.filesystem.getSource() }
       if IsDir(dir..slash..f) then 
          local te = LOVE_FullDir(dir..slash..f)
          for k,d in pairs(te.entries) do entries[k]=d end
       end
+    end
   end
+  if (not adir) and IsFile("UNJCR.lua") then
+      local s = love.filesystem.read("UNJCR.lua")
+      local fun,e = load(s)
+      if not fun then error(e) end
+      local te=fun()
+      for k,v in pairs(te) do
+          entries[k] = { entry=v.TRUENAME, LOVE="UNJCR/"..v.REF, mainfile =love.filesystem.getSource() }
+          print("Faked: "..k.." as "..v.REF)
+      end 
+  end       
   local ret = { entries = entries, from = love.filesystem.getSource(), kind="LOVE" }
   return ret
-
 end 
 
 function gJCRX()
@@ -179,7 +190,7 @@ function JCRXCall(para)
           opara = opara .. '"'..p..'"'
        end      
    end
-   local bt=io.popen('"'..jcrx..'" '..opara)
+   local bt=io.popen('"'..jcrx..'" '..opara,'rb')
    assert(bt,"Pipe failure\n",'"'..jcrx..'" '..opara)
    local head=bt:read(3)
    local data=bt:read('*all')
@@ -467,6 +478,6 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.07")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.09")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
