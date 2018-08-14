@@ -172,7 +172,7 @@ end
 	script["jcr6"] = `--[[
   jcr6.lua
   Ryanna - Script
-  version: 18.06.09
+  version: 18.08.14
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -214,7 +214,7 @@ end
 -- The IsFileType/IsDir/IsFile/IsSymlink functions are required as the original features were deprecated since LOVE 11.0 and this way old and new versions can handle this!
 function IsFileType(file,ftype)
     if love.filesystem.getInfo then
-       d = love.filesystem.getInfo( file )
+       local d = love.filesystem.getInfo( file )
        if not d then return false end
        return d.filetype==ftype
     else
@@ -537,7 +537,7 @@ end
 
 function JCR_Exists(j,nameentry)
   JCR_Error=""
-	local mj
+	local mj,entry
 	if not nameentry then
 		entry = string.upper(j)
 		mj = jcr
@@ -649,7 +649,7 @@ end
 
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.09")
+mkl.version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.08.14")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 ]]
 `
@@ -1244,7 +1244,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 `
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.06.09")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - jcr6.lua","18.08.14")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - jcr6.lua","ZLib License")
 
