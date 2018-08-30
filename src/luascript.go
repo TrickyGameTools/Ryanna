@@ -1072,21 +1072,21 @@ substr = string.sub
 
 function left(s,l)
 return substr(s,1,l)
-end
+end Left=left
 
 function right(s,l)
 local ln = l or 1
 local st = s or "nostring"
 -- return substr(st,string.len(st)-ln,string.len(st))
 return substr(st,-ln,-1)
-end 
+end Right=right
 
 function mid(s,o,l)
   local ln=l or 1
   local of=o or 1
   local st=s or ""
   return substr(st,of,(of+ln)-1)
-end 
+end Mid=mid
 
 
 function trim(s)
