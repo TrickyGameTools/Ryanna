@@ -803,7 +803,7 @@ destroylib=libdestroy
 	script["main"] = `--[[
   main.lua
   
-  version: 18.05.22
+  version: 18.08.30
   Copyright (C) 2017, 2018 Jeroen P. Broks
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any damages
@@ -822,7 +822,7 @@ destroylib=libdestroy
 -- basis script
 
 --[[
-mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.05.22")
+mkl.version("Ryanna - Builder for jcr based love projects - main.lua","18.08.30")
 mkl.lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 ]]
 
@@ -1252,7 +1252,7 @@ Use(RYANNA_MAIN_SCRIPT)
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - use.lua","ZLib License")
 
-	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.05.22")
+	/* Lua */ mkl.Version("Ryanna - Builder for jcr based love projects - main.lua","18.08.30")
 
 	/* Lua */ mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.lua","ZLib License")
 
