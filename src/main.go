@@ -1,3 +1,27 @@
+// License Information:
+// 	Ryanna
+// 	
+// 	
+// 	
+// 	
+// 	(c) Jeroen P. Broks, 2017, 2018, All rights reserved
+// 	
+// 		This program is free software: you can redistribute it and/or modify
+// 		it under the terms of the GNU General Public License as published by
+// 		the Free Software Foundation, either version 3 of the License, or
+// 		(at your option) any later version.
+// 		
+// 		This program is distributed in the hope that it will be useful,
+// 		but WITHOUT ANY WARRANTY; without even the implied warranty of
+// 		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// 		GNU General Public License for more details.
+// 		You should have received a copy of the GNU General Public License
+// 		along with this program.  If not, see <http://www.gnu.org/licenses/>.
+// 		
+// 	Exceptions to the standard GNU license are available with Jeroen's written permission given prior 
+// 	to the project the exceptions are needed for.
+// Version: 18.11.30
+// End License Information
 /*
 	Ryanna
 	
@@ -22,6 +46,7 @@
 	to the project the exceptions are needed for.
 Version: 18.06.07
 */
+
 package main
 
 import (
@@ -29,6 +54,7 @@ import (
 	"fmt"
 	"path"
 	"flag"
+	"strings"
 	"trickyunits/gini"
 	"trickyunits/mkl"
 	"trickyunits/qff"
@@ -46,7 +72,7 @@ var cols = map[string] ac {}
 var dependencies = []string{}
 
 func init(){
-mkl.Version("Ryanna - Builder for jcr based love projects - main.go","18.06.07")
+mkl.Version("Ryanna - Builder for jcr based love projects - main.go","18.11.30")
 mkl.Lic    ("Ryanna - Builder for jcr based love projects - main.go","GNU General Public License 3")
 cols["lblue"] = ac{ansistring.A_Blue,ansistring.A_Bright}
 cols["yellow"] = ac{ansistring.A_Yellow,0}
@@ -125,8 +151,10 @@ func main(){
 	/*
 	sand:=false	
 	if dur.Hours()>0 { sdur+=ansistrig.SCol(fmt.Sprintf("%d ",dur.Hours()),ansistring.A_Cyan,0)+ansistring.SCol("hours ",ansistring.A_Yellow,0); sand=true }
-	*/
-	sdur+=ansistring.SCol(dur.String(),ansistring.A_Cyan,0)
+	*/	
+	durationsplit:=strings.Split(dur.String(),".")
+	duration:=fmt.Sprintf("%s.%ss",durationsplit[0],qstr.Left(durationsplit[1],2))
+	sdur+=ansistring.SCol(duration,ansistring.A_Cyan,0)
 	sdur+=ansistring.SCol(" to build the entire package",ansistring.A_Yellow,0)
 	fmt.Printf("\n\t%s\n\n",sdur)
 }
